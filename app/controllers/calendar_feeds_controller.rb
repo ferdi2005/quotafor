@@ -34,6 +34,8 @@ class CalendarFeedsController < ApplicationController
       lines << "DTSTART:#{event.starts_at.utc.strftime('%Y%m%dT%H%M%SZ')}"
       if event.ends_at.present?
         lines << "DTEND:#{event.ends_at.utc.strftime('%Y%m%dT%H%M%SZ')}"
+      else
+        lines << "DURATION:PT1H"
       end
       lines << "SUMMARY:#{escape_ics(event.title)}"
       lines << "DESCRIPTION:#{escape_ics(event.description.to_s)}"
@@ -41,7 +43,25 @@ class CalendarFeedsController < ApplicationController
     end
 
     lines << "END:VCALENDAR"
-    "#{lines.join("\r\n")}\r\n"
+    lines.flat_map { |l| fold_line(l) }.join("\r\n") + "\r\n"
+  end
+
+  # RFC 5545 §3.1: fold lines longer than 75 octets
+  def fold_line(line)
+    return [ line ] if line.bytesize <= 75
+
+    result = []
+    buf = +""
+    line.each_char do |ch|
+      if (buf + ch).bytesize > 75
+        result << buf
+        buf = " " + ch
+      else
+        buf << ch
+      end
+    end
+    result << buf unless buf.empty?
+    result
   end
 
   def escape_ics(text)

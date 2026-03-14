@@ -6,8 +6,7 @@ class CustomerTimelineNote < ApplicationRecord
     call_note: 0,
     interview_summary: 1,
     visit_summary: 2,
-    technical_update: 3,
-    personal_update: 4
+    personal_update: 3
   }
 
   validates :happened_at, :category, :content, presence: true
