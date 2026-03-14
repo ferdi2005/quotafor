@@ -39,7 +39,7 @@
             <div class="col-md-4">
               <%= f.label :customer_type, "Tipo cliente", class: "form-label" %>
               <%= f.select :customer_type,
-                           options_for_select([["Tutti", ""], ["Nuovo", "new_customer"], ["Vecchio", "existing_customer"]], @filters[:customer_type]),
+                           options_for_select([["Tutti", ""]].concat(enum_options(Customer, :customer_type)), @filters[:customer_type]),
                            {},
                            class: "form-select" %>
             </div>
@@ -83,7 +83,7 @@
                     <td><%= customer.age || "-" %></td>
                     <td><%= customer.profession.presence || "-" %></td>
                     <td><%= l(customer.relationship_started_on) %></td>
-                    <td><%= customer.customer_type == "new_customer" ? "Nuovo" : "Vecchio" %></td>
+                    <td><%= enum_t(customer, :customer_type) %></td>
                     <td><%= next_appointment ? l(next_appointment.starts_at, format: :short) : "-" %></td>
                   </tr>
                 <% end %>

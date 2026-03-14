@@ -23,35 +23,21 @@
     <div class="col-md-4">
       <%= f.label :appointment_type, "Tipologia appuntamento", class: "form-label" %>
       <%= f.select :appointment_type,
-                   options_for_select([
-                     ["Primo incontro (Cliente nuovo)", "first_meeting"],
-                     ["Follow-up", "follow_up"],
-                     ["Assistenza", "assistance"],
-                     ["Rientro", "return_meeting"]
-                   ], @appointment.appointment_type),
+                   options_for_select(enum_options(Appointment, :appointment_type), @appointment.appointment_type),
                    {},
                    class: "form-select", id: "appt_type_select" %>
     </div>
     <div class="col-md-4">
       <%= f.label :status, "Stato", class: "form-label" %>
       <%= f.select :status,
-                   options_for_select([
-                     ["Pianificato", "scheduled"],
-                     ["Ripianificato", "rescheduled"],
-                     ["Completato", "completed"],
-                     ["Annullato", "canceled"]
-                   ], @appointment.status),
+                   options_for_select(enum_options(Appointment, :status), @appointment.status),
                    {},
                    class: "form-select" %>
     </div>
     <div class="col-md-4">
       <%= f.label :outcome, "Esito", class: "form-label" %>
       <%= f.select :outcome,
-                   options_for_select([
-                     ["Da definire", ""],
-                     ["Positivo", "positive"],
-                     ["Negativo", "negative"]
-                   ], @appointment.outcome),
+                   options_for_select([["Da definire", ""]].concat(enum_options(Appointment, :outcome)), @appointment.outcome),
                    {},
                    class: "form-select", id: "appt_outcome_select" %>
     </div>

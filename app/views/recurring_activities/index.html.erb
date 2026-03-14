@@ -31,9 +31,9 @@
               <% if @recurring_activities.any? %>
                 <% @recurring_activities.each do |activity| %>
                   <tr>
-                    <td><%= activity.topic.humanize %></td>
-                    <td><%= activity.periodicity.humanize %></td>
-                    <td><%= activity.weekday.humanize %></td>
+                    <td><%= enum_t(activity, :topic) %></td>
+                    <td><%= enum_t(activity, :periodicity) %></td>
+                    <td><%= enum_t(activity, :weekday) %></td>
                     <td><%= activity.starts_at.strftime("%H:%M") %> – <%= activity.ends_at.strftime("%H:%M") %></td>
                     <td><%= activity.location.presence || "-" %></td>
                     <td>

@@ -13,7 +13,7 @@
     <div class="col-md-6">
       <%= f.label :topic, "Argomento", class: "form-label" %>
       <%= f.select :topic,
-            options_for_select(RecurringActivity.topics.keys.map { |k| [k.humanize, k] }, recurring_activity.topic),
+            options_for_select(enum_options(RecurringActivity, :topic), recurring_activity.topic),
             {},
             class: "form-select" %>
     </div>
@@ -21,7 +21,7 @@
     <div class="col-md-3">
       <%= f.label :periodicity, "Periodicità", class: "form-label" %>
       <%= f.select :periodicity,
-            options_for_select(RecurringActivity.periodicities.keys.map { |k| [k.humanize, k] }, recurring_activity.periodicity),
+            options_for_select(enum_options(RecurringActivity, :periodicity), recurring_activity.periodicity),
             {},
             class: "form-select" %>
     </div>
@@ -29,7 +29,7 @@
     <div class="col-md-3">
       <%= f.label :weekday, "Giorno", class: "form-label" %>
       <%= f.select :weekday,
-            options_for_select(RecurringActivity.weekdays.keys.map { |k| [k.humanize, k] }, recurring_activity.weekday),
+            options_for_select(enum_options(RecurringActivity, :weekday), recurring_activity.weekday),
             {},
             class: "form-select" %>
     </div>

@@ -41,7 +41,7 @@
                   <div class="flex-grow-1">
                     <span class="fw-medium"><%= event.title %></span>
                     <span class="badge ms-1 <%= category_badge.fetch(event.category, 'bg-secondary') %>">
-                      <%= event.category.humanize %>
+                      <%= enum_t(event, :category) %>
                     </span>
                   </div>
                   <% if event.customer %>
@@ -81,7 +81,7 @@
                       <td><%= event.title %></td>
                       <td>
                         <span class="badge <%= category_badge.fetch(event.category, 'bg-secondary') %>">
-                          <%= event.category.humanize %>
+                          <%= enum_t(event, :category) %>
                         </span>
                       </td>
                       <td>

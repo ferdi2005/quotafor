@@ -17,7 +17,7 @@
     <div class="col-md-6">
       <%= f.label :category, "Categoria", class: "form-label" %>
       <%= f.select :category,
-            options_for_select(CustomerTimelineNote.categories.keys.map { |k| [k.humanize, k] }, timeline_note.category),
+            options_for_select(enum_options(CustomerTimelineNote, :category), timeline_note.category),
             {},
             class: "form-select" %>
     </div>

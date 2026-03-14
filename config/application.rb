@@ -22,6 +22,8 @@ module Quotafor
     # in config/environments, which are processed later.
     #
     config.time_zone = "Europe/Rome"
+    config.i18n.default_locale = :it
+    config.i18n.available_locales = [ :it ]
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

@@ -33,7 +33,7 @@
     <div class="col-md-6">
       <%= f.label :customer_type, "Tipo cliente", class: "form-label" %>
       <%= f.select :customer_type,
-                   options_for_select([["Nuovo", "new_customer"], ["Vecchio", "existing_customer"]], customer.customer_type),
+                   options_for_select(enum_options(Customer, :customer_type), customer.customer_type),
                    {},
                    class: "form-select" %>
     </div>

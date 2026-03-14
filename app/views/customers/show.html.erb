@@ -5,7 +5,7 @@
         <div>
           <h1 class="h4 mb-1"><%= @customer.full_name %></h1>
           <p class="text-muted mb-0">
-            Tipo: <%= @customer.customer_type == "new_customer" ? "Nuovo" : "Vecchio" %>
+            Tipo: <%= enum_t(@customer, :customer_type) %>
             | Professione: <%= @customer.profession.presence || "-" %>
             | Inizio rapporto: <%= l(@customer.relationship_started_on) %>
           </p>
@@ -44,7 +44,7 @@
             <% @appointments.limit(8).each do |appointment| %>
               <li class="list-group-item px-0">
                 <div class="d-flex justify-content-between gap-2">
-                  <div class="fw-semibold"><%= appointment.appointment_type.humanize %></div>
+                  <div class="fw-semibold"><%= enum_t(appointment, :appointment_type) %></div>
                   <div class="d-flex gap-1">
                     <%= link_to "Modifica", edit_customer_appointment_path(@customer, appointment), class: "btn btn-sm btn-outline-secondary" %>
                     <%= button_to "Elimina", customer_appointment_path(@customer, appointment), method: :delete,
@@ -140,7 +140,7 @@
               <li class="list-group-item px-0">
                 <div class="d-flex justify-content-between gap-2">
                   <div>
-                    <div class="fw-semibold"><%= note.category.humanize %></div>
+                    <div class="fw-semibold"><%= enum_t(note, :category) %></div>
                     <div class="small text-muted"><%= l(note.happened_at, format: :short) %></div>
                     <div><%= note.content %></div>
                   </div>

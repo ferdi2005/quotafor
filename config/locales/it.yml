@@ -1,0 +1,157 @@
+it:
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d %b"
+      long: "%d %B %Y"
+    day_names: [Domenica, Lunedì, Martedì, Mercoledì, Giovedì, Venerdì, Sabato]
+    abbr_day_names: [Dom, Lun, Mar, Mer, Gio, Ven, Sab]
+    month_names: [~, Gennaio, Febbraio, Marzo, Aprile, Maggio, Giugno, Luglio, Agosto, Settembre, Ottobre, Novembre, Dicembre]
+    abbr_month_names: [~, Gen, Feb, Mar, Apr, Mag, Giu, Lug, Ago, Set, Ott, Nov, Dic]
+    order: [day, month, year]
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      short: "%d/%m %H:%M"
+      long: "%d %B %Y %H:%M"
+    am: "am"
+    pm: "pm"
+
+  # Modelli
+  activerecord:
+    models:
+      user: "Utente"
+      customer: "Cliente"
+      appointment: "Appuntamento"
+      contact_call: "Telefonata"
+      calendar_event: "Evento calendario"
+      recurring_activity: "Attività ricorrente"
+      customer_objective: "Obiettivo"
+      customer_timeline_note: "Nota timeline"
+      in_app_notification: "Notifica"
+    attributes:
+      customer:
+        first_name: "Nome"
+        last_name: "Cognome"
+        email: "Email"
+        phone: "Telefono"
+        birth_date: "Data di nascita"
+        profession: "Professione"
+        customer_type: "Tipo cliente"
+        relationship_started_on: "Inizio rapporto"
+        notes: "Note"
+      appointment:
+        appointment_type: "Tipo appuntamento"
+        status: "Stato"
+        outcome: "Esito"
+        starts_at: "Data e ora inizio"
+        ends_at: "Data e ora fine"
+        location: "Luogo"
+        notes: "Note"
+        negative_reason: "Motivazione esito negativo"
+        presentation_notes: "Note presentazione"
+        visit_feedback: "Feedback visita"
+        referral: "Referral"
+        next_appointment_notes: "Note prossimo appuntamento"
+      contact_call:
+        scheduled_at: "Data e ora"
+        notes: "Note"
+        outcome: "Esito"
+      recurring_activity:
+        topic: "Argomento"
+        periodicity: "Periodicità"
+        weekday: "Giorno della settimana"
+        starts_at: "Inizio"
+        ends_at: "Fine"
+        notes: "Note"
+      calendar_event:
+        title: "Titolo"
+        starts_at: "Inizio"
+        ends_at: "Fine"
+        category: "Categoria"
+        description: "Descrizione"
+      customer_timeline_note:
+        category: "Tipo nota"
+        content: "Contenuto"
+        happened_at: "Data"
+
+  # Traduzioni enum
+  enums:
+    customer:
+      customer_type:
+        new_customer: "Cliente nuovo"
+        existing_customer: "Cliente esistente"
+    appointment:
+      appointment_type:
+        first_meeting: "Primo incontro"
+        follow_up: "Follow-up"
+        assistance: "Assistenza"
+        return_meeting: "Rientro"
+      status:
+        scheduled: "Pianificato"
+        rescheduled: "Ripianificato"
+        completed: "Completato"
+        canceled: "Annullato"
+      outcome:
+        positive: "Positivo"
+        negative: "Negativo"
+    calendar_event:
+      category:
+        customer_appointment: "Appuntamento cliente"
+        recurring_activity: "Attività ricorrente"
+        assistance: "Assistenza"
+    customer_timeline_note:
+      category:
+        call_note: "Nota telefonata"
+        interview_summary: "Sintesi colloquio"
+        visit_summary: "Sintesi visita"
+        personal_update: "Aggiornamento personale"
+    recurring_activity:
+      topic:
+        phone_calls: "Telefonate"
+        study: "Studio"
+        visit_preparation: "Preparazione visite"
+        one_to_one_meeting: "Incontro one-to-one"
+        team_meeting: "Riunione di team"
+        area_plenary: "Plenaria di area"
+        personal_administration: "Amministrazione personale"
+        personal_space: "Spazio personale"
+      periodicity:
+        daily: "Giornaliero"
+        weekly: "Settimanale"
+        monthly: "Mensile"
+      weekday:
+        monday: "Lunedì"
+        tuesday: "Martedì"
+        wednesday: "Mercoledì"
+        thursday: "Giovedì"
+        friday: "Venerdì"
+        saturday: "Sabato"
+        sunday: "Domenica"
+    in_app_notification:
+      notification_type:
+        reminder_day_before: "Promemoria giorno prima"
+        generic: "Notifica generica"
+
+  helpers:
+    submit:
+      create: "Crea %{model}"
+      update: "Salva modifiche"
+      appointment:
+        create: "Crea appuntamento"
+        update: "Aggiorna appuntamento"
+      customer:
+        create: "Crea cliente"
+        update: "Salva cliente"
+      contact_call:
+        create: "Crea telefonata"
+        update: "Salva telefonata"
+      customer_objective:
+        create: "Crea obiettivo"
+        update: "Salva obiettivo"
+      customer_timeline_note:
+        create: "Aggiungi nota"
+        update: "Salva nota"
+      recurring_activity:
+        create: "Crea attività"
+        update: "Salva attività"
