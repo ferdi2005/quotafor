@@ -19,7 +19,8 @@
             <%= link_to "Vista giornaliera", calendar_events_path(view: "daily"),
                   class: "btn btn-sm #{params[:view] == 'daily' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
           </div>
-          <a href="<%= @feed_url %>" class="btn btn-outline-primary btn-sm">Copia URL feed ICS</a>
+          <%= link_to "Iscriviti con Calendario", @subscription_url, class: "btn btn-primary btn-sm" %>
+          <%= link_to "Apri feed ICS", @feed_url, class: "btn btn-outline-primary btn-sm" %>
         </div>
       </div>
     </div>

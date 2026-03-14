@@ -11,12 +11,19 @@ class CalendarFeedsControllerTest < ActionDispatch::IntegrationTest
     assert_match "text/calendar", response.content_type
     assert_includes response.body, "BEGIN:VCALENDAR"
     assert_includes response.body, "END:VCALENDAR"
+    assert_equal 'inline; filename="quotafor-calendar.ics"', response.headers["Content-Disposition"]
   end
 
   test "GET feed with valid token includes user email in cal name" do
     get calendar_feed_path(token: @user.calendar_feed_token, format: :ics)
     assert_response :success
     assert_includes response.body, @user.email
+    assert_includes response.body, "METHOD:PUBLISH"
+    assert_includes response.body, "NAME:QuotaFor - #{@user.email}"
+    assert_includes response.body, "REFRESH-INTERVAL;VALUE=DURATION:P1D"
+    assert_includes response.body, "X-PUBLISHED-TTL:P1D"
+    assert_match(/UID:calendar-event-\d+@www\.example\.com/, response.body)
+    assert_includes response.body, "STATUS:CONFIRMED"
   end
 
   test "GET feed with invalid token returns 404" do
