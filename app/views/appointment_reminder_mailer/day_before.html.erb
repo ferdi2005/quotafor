@@ -1,0 +1,11 @@
+<h1>Promemoria appuntamento di domani</h1>
+<p>Ciao <%= @user.first_name.presence || @user.email %>,</p>
+<p>
+  Hai un appuntamento programmato per domani.
+</p>
+<ul>
+  <li><strong>Titolo:</strong> <%= @event.title %></li>
+  <li><strong>Data e ora:</strong> <%= l(@event.starts_at, format: :short) %></li>
+  <li><strong>Cliente:</strong> <%= @customer&.full_name || "-" %></li>
+</ul>
+<p>Apri l'app per i dettagli e aggiornamenti.</p>

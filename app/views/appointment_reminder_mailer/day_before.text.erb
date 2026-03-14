@@ -1,0 +1,10 @@
+Promemoria appuntamento di domani
+
+Ciao <%= @user.first_name.presence || @user.email %>,
+hai un appuntamento programmato per domani.
+
+Titolo: <%= @event.title %>
+Data e ora: <%= l(@event.starts_at, format: :short) %>
+Cliente: <%= @customer&.full_name || "-" %>
+
+Apri l'app per i dettagli e aggiornamenti.

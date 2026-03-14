@@ -1,0 +1,108 @@
+<% category_badge = {
+  "customer_appointment" => "bg-primary",
+  "recurring_activity"   => "bg-warning text-dark",
+  "assistance"           => "bg-danger"
+} %>
+
+<div class="row g-3">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+          <h1 class="h4 mb-1">Calendario attività</h1>
+          <p class="text-muted mb-0">Tutti gli appuntamenti cliente e attività pianificate.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <div class="btn-group" role="group">
+            <%= link_to "Vista lista", calendar_events_path(view: "list"),
+                  class: "btn btn-sm #{params[:view] != 'daily' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+            <%= link_to "Vista giornaliera", calendar_events_path(view: "daily"),
+                  class: "btn btn-sm #{params[:view] == 'daily' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+          </div>
+          <a href="<%= @feed_url %>" class="btn btn-outline-primary btn-sm">Copia URL feed ICS</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <% if params[:view] == "daily" %>
+      <%# ── Vista giornaliera raggruppata per giorno ── %>
+      <% if @events_by_day.any? %>
+        <% @events_by_day.sort.each do |date, day_events| %>
+          <div class="card shadow-sm mb-3">
+            <div class="card-header fw-semibold">
+              <%= l(date, format: :long) %>
+            </div>
+            <ul class="list-group list-group-flush">
+              <% day_events.sort_by(&:starts_at).each do |event| %>
+                <li class="list-group-item d-flex align-items-start gap-3">
+                  <span class="text-muted text-nowrap" style="min-width:3.5rem"><%= event.starts_at.strftime("%H:%M") %></span>
+                  <div class="flex-grow-1">
+                    <span class="fw-medium"><%= event.title %></span>
+                    <span class="badge ms-1 <%= category_badge.fetch(event.category, 'bg-secondary') %>">
+                      <%= event.category.humanize %>
+                    </span>
+                  </div>
+                  <% if event.customer %>
+                    <%= link_to "Vai al cliente", customer_path(event.customer),
+                          class: "btn btn-sm btn-outline-primary text-nowrap" %>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="card shadow-sm">
+          <div class="card-body text-center text-muted py-4">Nessun evento in calendario.</div>
+        </div>
+      <% end %>
+
+    <% else %>
+      <%# ── Vista lista (tabella piatta) ── %>
+      <div class="card shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Data/ora</th>
+                  <th>Titolo</th>
+                  <th>Categoria</th>
+                  <th>Cliente</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if @events.any? %>
+                  <% @events.each do |event| %>
+                    <tr>
+                      <td><%= l(event.starts_at, format: :short) %></td>
+                      <td><%= event.title %></td>
+                      <td>
+                        <span class="badge <%= category_badge.fetch(event.category, 'bg-secondary') %>">
+                          <%= event.category.humanize %>
+                        </span>
+                      </td>
+                      <td>
+                        <% if event.customer %>
+                          <%= link_to event.customer.full_name, customer_path(event.customer) %>
+                        <% else %>
+                          -
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% else %>
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-4">Nessun evento in calendario.</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

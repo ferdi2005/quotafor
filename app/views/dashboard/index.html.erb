@@ -1,0 +1,101 @@
+<div class="row g-3 mb-3">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <h1 class="h4 mb-1">Dashboard clienti</h1>
+            <p class="text-muted mb-0">Ricerca combinabile su nome, età, professione, data inizio, tipo cliente e prossimo appuntamento.</p>
+          </div>
+          <%= link_to "Nuovo cliente", new_customer_path, class: "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <%= form_with url: dashboard_path, method: :get, scope: :filters, local: true do |f| %>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <%= f.label :full_name, "Nome o cognome", class: "form-label" %>
+              <%= f.text_field :full_name, value: @filters[:full_name], class: "form-control" %>
+            </div>
+            <div class="col-md-2">
+              <%= f.label :age, "Età", class: "form-label" %>
+              <%= f.number_field :age, value: @filters[:age], class: "form-control", min: 18 %>
+            </div>
+            <div class="col-md-3">
+              <%= f.label :profession, "Professione", class: "form-label" %>
+              <%= f.text_field :profession, value: @filters[:profession], class: "form-control" %>
+            </div>
+            <div class="col-md-3">
+              <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
+              <%= f.date_field :relationship_started_on, value: @filters[:relationship_started_on], class: "form-control" %>
+            </div>
+            <div class="col-md-4">
+              <%= f.label :customer_type, "Tipo cliente", class: "form-label" %>
+              <%= f.select :customer_type,
+                           options_for_select([["Tutti", ""], ["Nuovo", "new_customer"], ["Vecchio", "existing_customer"]], @filters[:customer_type]),
+                           {},
+                           class: "form-select" %>
+            </div>
+            <div class="col-md-4">
+              <%= f.label :next_appointment_on, "Prossimo appuntamento", class: "form-label" %>
+              <%= f.date_field :next_appointment_on, value: @filters[:next_appointment_on], class: "form-control" %>
+            </div>
+            <div class="col-md-4 d-flex align-items-end gap-2">
+              <%= f.submit "Filtra", class: "btn btn-primary" %>
+              <%= link_to "Reset", dashboard_path, class: "btn btn-outline-secondary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Nome</th>
+                <th>Età</th>
+                <th>Professione</th>
+                <th>Data inizio</th>
+                <th>Tipo</th>
+                <th>Prossimo appuntamento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @customers.any? %>
+                <% @customers.each do |customer| %>
+                  <% next_appointment = customer.appointments.upcoming.first %>
+                  <tr>
+                    <td><%= link_to customer.full_name, customer_path(customer), class: "fw-semibold text-decoration-none" %></td>
+                    <td><%= customer.age || "-" %></td>
+                    <td><%= customer.profession.presence || "-" %></td>
+                    <td><%= l(customer.relationship_started_on) %></td>
+                    <td><%= customer.customer_type == "new_customer" ? "Nuovo" : "Vecchio" %></td>
+                    <td><%= next_appointment ? l(next_appointment.starts_at, format: :short) : "-" %></td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan="6" class="text-center text-muted py-4">Nessun cliente trovato con i filtri selezionati.</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<%= form_with model: [@customer, contact_call], local: true do |f| %>
+  <% if contact_call.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% contact_call.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= f.label :called_at, "Data e ora chiamata", class: "form-label" %>
+      <%= f.datetime_local_field :called_at, class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :scheduled_for, "Prossimo contatto pianificato", class: "form-label" %>
+      <%= f.datetime_local_field :scheduled_for, class: "form-control" %>
+    </div>
+    <div class="col-12">
+      <%= f.label :notes, "Note", class: "form-label" %>
+      <%= f.text_area :notes, class: "form-control", rows: 3 %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Annulla", customer_path(@customer), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

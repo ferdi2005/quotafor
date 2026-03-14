@@ -1,0 +1,160 @@
+<div class="row g-3">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body d-flex flex-wrap justify-content-between gap-2">
+        <div>
+          <h1 class="h4 mb-1"><%= @customer.full_name %></h1>
+          <p class="text-muted mb-0">
+            Tipo: <%= @customer.customer_type == "new_customer" ? "Nuovo" : "Vecchio" %>
+            | Professione: <%= @customer.profession.presence || "-" %>
+            | Inizio rapporto: <%= l(@customer.relationship_started_on) %>
+          </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <%= link_to "Nuovo appuntamento", new_customer_appointment_path(@customer), class: "btn btn-primary" %>
+          <%= link_to "Nuova telefonata", new_customer_contact_call_path(@customer), class: "btn btn-outline-primary" %>
+          <%= link_to "Nuova nota timeline", new_customer_customer_timeline_note_path(@customer), class: "btn btn-outline-primary" %>
+          <%= link_to "Nuovo obiettivo", new_customer_customer_objective_path(@customer), class: "btn btn-outline-primary" %>
+          <%= link_to "Modifica", edit_customer_path(@customer), class: "btn btn-outline-secondary" %>
+          <%= link_to "Dashboard", dashboard_path, class: "btn btn-outline-secondary" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h2 class="h6">Dati personali</h2>
+        <p class="mb-1"><strong>Età:</strong> <%= @customer.age || "-" %></p>
+        <p class="mb-1"><strong>Passioni:</strong> <%= @customer.passions.presence || "-" %></p>
+        <p class="mb-0"><strong>Sintesi:</strong> <%= @customer.personal_summary.presence || "-" %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h6 mb-0">Appuntamenti</h2>
+        </div>
+        <% if @appointments.any? %>
+          <ul class="list-group list-group-flush">
+            <% @appointments.limit(8).each do |appointment| %>
+              <li class="list-group-item px-0">
+                <div class="d-flex justify-content-between gap-2">
+                  <div class="fw-semibold"><%= appointment.appointment_type.humanize %></div>
+                  <div class="d-flex gap-1">
+                    <%= link_to "Modifica", edit_customer_appointment_path(@customer, appointment), class: "btn btn-sm btn-outline-secondary" %>
+                    <%= button_to "Elimina", customer_appointment_path(@customer, appointment), method: :delete,
+                          data: { turbo_confirm: "Eliminare questo appuntamento?" },
+                          class: "btn btn-sm btn-outline-danger" %>
+                  </div>
+                </div>
+                <div class="small text-muted"><%= l(appointment.starts_at, format: :short) %></div>
+                <div class="small"><%= appointment.visit_feedback.presence || "Nessun feedback" %></div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted mb-0">Nessun appuntamento registrato.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h2 class="h6">Obiettivi del cliente</h2>
+        <% if @customer.customer_objectives.any? %>
+          <ul class="list-group list-group-flush">
+            <% @customer.customer_objectives.order(created_at: :desc).each do |obj| %>
+              <li class="list-group-item px-0">
+                <div class="d-flex justify-content-between gap-2">
+                  <div>
+                    <div class="fw-semibold"><%= obj.title %></div>
+                    <div class="small"><%= obj.description.presence || "" %></div>
+                  </div>
+                  <div class="d-flex gap-1 flex-shrink-0">
+                    <span class="badge <%= obj.active? ? 'bg-success' : 'bg-secondary' %> align-self-start">
+                      <%= obj.active? ? "Attivo" : "Inattivo" %>
+                    </span>
+                    <%= link_to "Modifica", edit_customer_customer_objective_path(@customer, obj), class: "btn btn-sm btn-outline-secondary" %>
+                    <%= button_to "Elimina", customer_customer_objective_path(@customer, obj), method: :delete,
+                          data: { turbo_confirm: "Eliminare questo obiettivo?" },
+                          class: "btn btn-sm btn-outline-danger" %>
+                  </div>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted mb-0">Nessun obiettivo registrato.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h2 class="h6">Telefonate</h2>
+        <% if @contact_calls.any? %>
+          <ul class="list-group list-group-flush">
+            <% @contact_calls.limit(10).each do |call| %>
+              <li class="list-group-item px-0">
+                <div class="d-flex justify-content-between gap-2">
+                  <div>
+                    <div class="small text-muted"><%= l(call.called_at, format: :short) %></div>
+                    <% if call.scheduled_for? %>
+                      <div class="small">Prossimo contatto: <%= l(call.scheduled_for, format: :short) %></div>
+                    <% end %>
+                    <div class="small"><%= call.notes.presence || "Nessuna nota" %></div>
+                  </div>
+                  <div class="d-flex gap-1 flex-shrink-0">
+                    <%= link_to "Modifica", edit_customer_contact_call_path(@customer, call), class: "btn btn-sm btn-outline-secondary" %>
+                    <%= button_to "Elimina", customer_contact_call_path(@customer, call), method: :delete,
+                          data: { turbo_confirm: "Eliminare questa telefonata?" },
+                          class: "btn btn-sm btn-outline-danger" %>
+                  </div>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted mb-0">Nessuna telefonata registrata.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h6">Vita del rapporto (timeline)</h2>
+        <% if @timeline_notes.any? %>
+          <ul class="list-group list-group-flush">
+            <% @timeline_notes.limit(20).each do |note| %>
+              <li class="list-group-item px-0">
+                <div class="d-flex justify-content-between gap-2">
+                  <div>
+                    <div class="fw-semibold"><%= note.category.humanize %></div>
+                    <div class="small text-muted"><%= l(note.happened_at, format: :short) %></div>
+                    <div><%= note.content %></div>
+                  </div>
+                  <%= button_to "Elimina", customer_customer_timeline_note_path(@customer, note), method: :delete,
+                        data: { turbo_confirm: "Eliminare questa nota?" },
+                        class: "btn btn-sm btn-outline-danger flex-shrink-0 align-self-start" %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted mb-0">Timeline ancora vuota.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

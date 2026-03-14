@@ -1,0 +1,19 @@
+one:
+  email: promoter1@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+  first_name: Mario
+  last_name: Rossi
+  time_zone: Europe/Rome
+  calendar_feed_token: token-promoter-1
+  email_notifications: true
+  in_app_notifications: true
+
+two:
+  email: promoter2@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+  first_name: Laura
+  last_name: Bianchi
+  time_zone: Europe/Rome
+  calendar_feed_token: token-promoter-2
+  email_notifications: true
+  in_app_notifications: true

@@ -1,0 +1,37 @@
+<div class="row g-3">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h1 class="h4 mb-1">Notifiche</h1>
+        <p class="text-muted mb-0">Promemoria ed avvisi.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <% if @notifications.any? %>
+          <ul class="list-group list-group-flush">
+            <% @notifications.each do |notification| %>
+              <li class="list-group-item d-flex justify-content-between align-items-start gap-2 <%= notification.read_at? ? 'text-muted' : 'fw-semibold' %>">
+                <div>
+                  <div><%= notification.title %></div>
+                  <div class="small fw-normal"><%= notification.body %></div>
+                  <div class="small text-muted fw-normal"><%= l(notification.created_at, format: :short) %></div>
+                </div>
+                <% unless notification.read_at? %>
+                  <%= button_to "Segna come letto", mark_as_read_in_app_notification_path(notification),
+                        method: :patch,
+                        class: "btn btn-sm btn-outline-secondary flex-shrink-0" %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted text-center py-4 mb-0">Nessuna notifica.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  topic: 1
+  weekday: 1
+  periodicity: 1
+  starts_at: 2026-03-14 10:48:23
+  ends_at: 2026-03-14 10:48:23
+  location: MyString
+  notes: MyText
+  active: false
+
+two:
+  user: two
+  topic: 1
+  weekday: 1
+  periodicity: 1
+  starts_at: 2026-03-14 10:48:23
+  ends_at: 2026-03-14 10:48:23
+  location: MyString
+  notes: MyText
+  active: false

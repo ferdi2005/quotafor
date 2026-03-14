@@ -1,0 +1,159 @@
+<%= form_with model: [@customer, @appointment], local: true do |f| %>
+  <% if @appointment.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% @appointment.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <%# Data e tipo %>
+    <div class="col-md-6">
+      <%= f.label :starts_at, "Data e ora inizio", class: "form-label" %>
+      <%= f.datetime_local_field :starts_at, class: "form-control", required: true %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :ends_at, "Data e ora fine", class: "form-label" %>
+      <%= f.datetime_local_field :ends_at, class: "form-control" %>
+    </div>
+
+    <div class="col-md-4">
+      <%= f.label :appointment_type, "Tipologia appuntamento", class: "form-label" %>
+      <%= f.select :appointment_type,
+                   options_for_select([
+                     ["Primo incontro (Cliente nuovo)", "first_meeting"],
+                     ["Follow-up", "follow_up"],
+                     ["Assistenza", "assistance"],
+                     ["Rientro", "return_meeting"]
+                   ], @appointment.appointment_type),
+                   {},
+                   class: "form-select", id: "appt_type_select" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :status, "Stato", class: "form-label" %>
+      <%= f.select :status,
+                   options_for_select([
+                     ["Pianificato", "scheduled"],
+                     ["Ripianificato", "rescheduled"],
+                     ["Completato", "completed"],
+                     ["Annullato", "canceled"]
+                   ], @appointment.status),
+                   {},
+                   class: "form-select" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :outcome, "Esito", class: "form-label" %>
+      <%= f.select :outcome,
+                   options_for_select([
+                     ["Da definire", ""],
+                     ["Positivo", "positive"],
+                     ["Negativo", "negative"]
+                   ], @appointment.outcome),
+                   {},
+                   class: "form-select", id: "appt_outcome_select" %>
+    </div>
+
+    <%# Sezione: Riunione (primo incontro, follow-up, rientro) %>
+    <div id="section-meeting" class="col-12">
+      <div class="row g-3">
+        <div class="col-12">
+          <%= f.label :visit_feedback, "Feedback visita / Esito colloquio", class: "form-label" %>
+          <%= f.text_area :visit_feedback, class: "form-control", rows: 3,
+                          id: "appt_visit_feedback" %>
+        </div>
+        <div class="col-12">
+          <%= f.label :presentation_notes, "Note presentazione soluzioni", class: "form-label" %>
+          <%= f.text_area :presentation_notes, class: "form-control", rows: 3,
+                          id: "appt_presentation_notes" %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :invested_resources, "Risorse investite", class: "form-label" %>
+          <%= f.text_area :invested_resources, class: "form-control", rows: 2 %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :deadlines, "Scadenze", class: "form-label" %>
+          <%= f.text_area :deadlines, class: "form-control", rows: 2 %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :referrals, "Referral ricevuti", class: "form-label" %>
+          <%= f.text_area :referrals, class: "form-control", rows: 2 %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :next_appointment_at, "Prossimo appuntamento", class: "form-label" %>
+          <%= f.datetime_local_field :next_appointment_at, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <%# Sezione: Assistenza %>
+    <div id="section-assistance" class="col-12 d-none">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <%= f.label :assistance_goal, "Obiettivo visita assistenza", class: "form-label" %>
+          <%= f.text_area :assistance_goal, class: "form-control", rows: 2 %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :technical_analysis, "Analisi tecnica prodotti", class: "form-label" %>
+          <%= f.text_area :technical_analysis, class: "form-control", rows: 2 %>
+        </div>
+        <div class="col-12">
+          <%= f.label :proposed_changes, "Modifiche proposte", class: "form-label" %>
+          <%= f.text_area :proposed_changes, class: "form-control", rows: 2 %>
+        </div>
+      </div>
+    </div>
+
+    <%# Sezione: Motivazione esito negativo %>
+    <div id="section-negative" class="col-12 d-none">
+      <%= f.label :negative_reason, "Motivazione esito negativo", class: "form-label" %>
+      <%= f.text_area :negative_reason, class: "form-control", rows: 2,
+                      id: "appt_negative_reason" %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Annulla", customer_path(@customer), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
+
+<script>
+(function () {
+  var typeSelect    = document.getElementById('appt_type_select');
+  var outcomeSelect = document.getElementById('appt_outcome_select');
+  var secMeeting    = document.getElementById('section-meeting');
+  var secAssist     = document.getElementById('section-assistance');
+  var secNegative   = document.getElementById('section-negative');
+  var negTextarea   = document.getElementById('appt_negative_reason');
+  var feedbackTA    = document.getElementById('appt_visit_feedback');
+  var presentTA     = document.getElementById('appt_presentation_notes');
+
+  function updateType() {
+    var isAssist = typeSelect.value === 'assistance';
+    secMeeting.classList.toggle('d-none', isAssist);
+    secAssist.classList.toggle('d-none', !isAssist);
+    updateOutcome();
+  }
+
+  function updateOutcome() {
+    var outcome      = outcomeSelect.value;
+    var isNegative   = outcome === 'negative';
+    var isPositive   = outcome === 'positive';
+    var isFirstMtg   = typeSelect.value === 'first_meeting';
+    var hasOutcome   = outcome !== '';
+
+    secNegative.classList.toggle('d-none', !isNegative);
+    negTextarea.required   = isNegative;
+    feedbackTA.required    = isPositive;
+    presentTA.required     = isFirstMtg && hasOutcome;
+  }
+
+  typeSelect.addEventListener('change', updateType);
+  outcomeSelect.addEventListener('change', updateOutcome);
+
+  updateType();
+})();
+</script>

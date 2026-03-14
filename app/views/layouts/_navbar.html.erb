@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light border rounded mt-2 mb-3">
+	<div class="container-fluid">
+		<%= link_to "QuotaFor", authenticated_root_path, class: "navbar-brand fw-semibold" %>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="mainNavbar">
+			<% if user_signed_in? %>
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<%= link_to "Dashboard", dashboard_path, class: "nav-link" %>
+					</li>
+					<li class="nav-item">
+						<%= link_to "Calendario", calendar_events_path, class: "nav-link" %>
+					</li>
+					<li class="nav-item">
+						<%= link_to "Attività ricorrenti", recurring_activities_path, class: "nav-link" %>
+					</li>
+				</ul>
+
+				<div class="d-flex align-items-center gap-2">
+					<% unread_count = current_user.in_app_notifications.unread.count %>
+					<%= link_to in_app_notifications_path, class: "btn btn-outline-secondary btn-sm position-relative" do %>
+						<i class="fa fa-bell"></i>
+						<% if unread_count > 0 %>
+							<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+								<%= unread_count %>
+							</span>
+						<% end %>
+					<% end %>
+					<span class="text-muted small"><%= current_user.email %></span>
+					<%= button_to "Esci", destroy_user_session_path, method: :delete, class: "btn btn-outline-danger btn-sm" %>
+				</div>
+			<% else %>
+				<div class="ms-auto">
+					<%= link_to "Accedi", new_user_session_path, class: "btn btn-primary btn-sm" %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+</nav>
