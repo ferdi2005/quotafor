@@ -22,16 +22,242 @@
     </div>
   </div>
 
-  <div class="col-12 col-lg-6">
+  <div class="col-12 col-lg-12">
     <div class="card shadow-sm h-100">
       <div class="card-body">
-        <h2 class="h6">Dati personali</h2>
-        <p class="mb-1"><strong>Età:</strong> <%= @customer.age || "-" %></p>
-        <p class="mb-1"><strong>Passioni:</strong> <%= @customer.passions.presence || "-" %></p>
-        <p class="mb-0"><strong>Sintesi:</strong> <%= @customer.personal_summary.presence || "-" %></p>
+        <h2 class="h6">Dati personali cliente</h2>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Età:</strong> <%= @customer.age || "-" %></p>
+            <p class="mb-1"><strong>Professione:</strong> <%= @customer.profession.presence || "-" %></p>
+            <p class="mb-1"><strong>Incassi annuali:</strong> <%= number_to_currency(@customer.annual_income) if @customer.annual_income.present? %></p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Livello soddisfazione:</strong> <%= @customer.satisfaction_level.present? ? "#{@customer.satisfaction_level}/10" : "-" %></p>
+            <p class="mb-1"><strong>Prospettive:</strong></p>
+            <p class="text-muted small"><%= @customer.prospects.presence || "-" %></p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Passioni:</strong></p>
+            <p class="text-muted small"><%= @customer.passions.presence || "-" %></p>
+          </div>
+        </div>
+        <% if @customer.personal_summary.present? %>
+          <hr class="my-2">
+          <p class="mb-0"><strong>Sintesi intervista:</strong></p>
+          <p class="text-muted small"><%= @customer.personal_summary %></p>
+        <% end %>
       </div>
     </div>
   </div>
+
+  <% if @customer.spouses.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Moglie</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Cognome</th>
+                  <th>Età</th>
+                  <th>Professione</th>
+                  <th>Incassi annuali</th>
+                  <th>Prospettive</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer.spouses.each do |spouse| %>
+                  <tr>
+                    <td><%= spouse.first_name %></td>
+                    <td><%= spouse.last_name %></td>
+                    <td><%= spouse.age || "-" %></td>
+                    <td><%= spouse.profession.presence || "-" %></td>
+                    <td><%= spouse.annual_income.present? ? number_to_currency(spouse.annual_income) : "-" %></td>
+                    <td><%= spouse.prospects.presence || "-" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @customer.children.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Figli</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Cognome</th>
+                  <th>Età</th>
+                  <th>Professione</th>
+                  <th>Incassi annuali</th>
+                  <th>Desideri</th>
+                  <th>Soluzioni</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer.children.each do |child| %>
+                  <tr>
+                    <td><%= child.first_name %></td>
+                    <td><%= child.last_name %></td>
+                    <td><%= child.age || "-" %></td>
+                    <td><%= child.profession.presence || "-" %></td>
+                    <td><%= child.annual_income.present? ? number_to_currency(child.annual_income) : "-" %></td>
+                    <td><span class="small"><%= child.desires.presence || "-" %></span></td>
+                    <td><span class="small"><%= child.solutions.presence || "-" %></span></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @customer.banks.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Banche</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Banca</th>
+                  <th>Perché</th>
+                  <th>Uso</th>
+                  <th>Cosa ha</th>
+                  <th>Importo</th>
+                  <th>Rendimento</th>
+                  <th>Scadenze</th>
+                  <th>Soddisfazione</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer.banks.each do |bank| %>
+                  <tr>
+                    <td><strong><%= bank.bank_name %></strong></td>
+                    <td><small><%= bank.reason.presence || "-" %></small></td>
+                    <td><small><%= bank.use.presence || "-" %></small></td>
+                    <td><small><%= bank.what_has.presence || "-" %></small></td>
+                    <td><%= bank.amount.present? ? number_to_currency(bank.amount) : "-" %></td>
+                    <td><%= bank.rendimento.present? ? number_to_percentage(bank.rendimento, precision: 2) : "-" %></td>
+                    <td><small><%= bank.deadlines.presence || "-" %></small></td>
+                    <td><%= bank.satisfaction_level.present? ? "#{bank.satisfaction_level}/10" : "-" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @customer.insurances.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Previdenza</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Perché</th>
+                  <th>Obiettivo</th>
+                  <th>Importo</th>
+                  <th>Rendimento</th>
+                  <th>Soddisfazione</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer.insurances.each do |insurance| %>
+                  <tr>
+                    <td><small><%= insurance.reason.presence || "-" %></small></td>
+                    <td><small><%= insurance.objective.presence || "-" %></small></td>
+                    <td><%= insurance.amount.present? ? number_to_currency(insurance.amount) : "-" %></td>
+                    <td><%= insurance.rendimento.present? ? number_to_percentage(insurance.rendimento, precision: 2) : "-" %></td>
+                    <td><%= insurance.satisfaction_level.present? ? "#{insurance.satisfaction_level}/10" : "-" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @customer.properties.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Immobili</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Scopo</th>
+                  <th>Indirizzo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer.properties.each do |property| %>
+                  <tr>
+                    <td><%= enum_t(property, :purpose) %></td>
+                    <td><%= property.address %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @customer.customer_expenses.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Costi Sostenuti</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Tipo spesa</th>
+                  <th>Categoria</th>
+                  <th>Importo</th>
+                  <th>Descrizione</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer.customer_expenses.each do |expense| %>
+                  <tr>
+                    <td><%= expense.expense_type %></td>
+                    <td><small><%= expense.category.presence ? enum_t(expense, :category) : "-" %></small></td>
+                    <td><%= number_to_currency(expense.amount) %></td>
+                    <td><small><%= expense.description.presence || "-" %></small></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
 
   <div class="col-12 col-lg-6">
     <div class="card shadow-sm h-100">

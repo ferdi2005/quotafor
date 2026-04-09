@@ -29,6 +29,12 @@ it:
       customer_objective: "Obiettivo"
       customer_timeline_note: "Nota timeline"
       in_app_notification: "Notifica"
+      spouse: "Moglie"
+      child: "Figlio/a"
+      customer_expense: "Spesa"
+      bank: "Banca"
+      insurance: "Previdenza"
+      property: "Immobile"
     attributes:
       customer:
         first_name: "Nome"
@@ -40,6 +46,49 @@ it:
         customer_type: "Tipo cliente"
         relationship_started_on: "Inizio rapporto"
         notes: "Note"
+        prospects: "Prospettive"
+        satisfaction_level: "Livello soddisfazione"
+        annual_income: "Incassi annuali"
+      spouse:
+        first_name: "Nome"
+        last_name: "Cognome"
+        birth_date: "Data di nascita"
+        age: "Età"
+        profession: "Professione"
+        prospects: "Prospettive"
+        annual_income: "Incassi annuali"
+      child:
+        first_name: "Nome"
+        last_name: "Cognome"
+        birth_date: "Data di nascita"
+        age: "Età"
+        profession: "Professione"
+        desires: "Desideri"
+        solutions: "Soluzioni"
+        annual_income: "Incassi annuali"
+      customer_expense:
+        expense_type: "Tipo spesa"
+        amount: "Importo"
+        description: "Descrizione"
+        category: "Categoria"
+      bank:
+        bank_name: "Banca"
+        reason: "Perché"
+        use: "Causa/Uso"
+        satisfaction_level: "Livello soddisfazione"
+        what_has: "Cosa ha"
+        deadlines: "Scadenze"
+        amount: "Importo"
+        rendimento: "Rendimento"
+      insurance:
+        reason: "Perché"
+        objective: "Obiettivo"
+        amount: "Importo"
+        rendimento: "Rendimento"
+        satisfaction_level: "Livello soddisfazione"
+      property:
+        purpose: "Scopo"
+        address: "Indirizzo"
       appointment:
         appointment_type: "Tipo appuntamento"
         status: "Stato"
@@ -79,8 +128,9 @@ it:
   enums:
     customer:
       customer_type:
-        new_customer: "Cliente nuovo"
+        new_customer: "Prospect"
         existing_customer: "Cliente esistente"
+        previous_customer: "Cliente precedente"
     appointment:
       appointment_type:
         first_meeting: "Primo incontro"
@@ -132,6 +182,26 @@ it:
       notification_type:
         reminder_day_before: "Promemoria giorno prima"
         generic: "Notifica generica"
+    customer_expense:
+      category:
+        utilities: "Utenze"
+        light: "Luce"
+        gas: "Gas"
+        condominium: "Condominio"
+        tv: "TV"
+        subscriptions: "Abbonamenti"
+        misc: "Vari"
+        waste: "Immondizia"
+        taxes: "Tasse"
+        weekend: "Weekend"
+        dinners: "Cene"
+        celebrations: "Feste"
+        birthdays: "Compleanni"
+        vacations: "Vacanze"
+    property:
+      purpose:
+        instrumental: "Strumentale"
+        investment: "Investimento"
 
   helpers:
     submit:

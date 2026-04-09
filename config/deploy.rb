@@ -29,7 +29,7 @@ set :rbenv_roles,    :all
 set :bundle_flags, "--without development test"
 
 # Puma
-set :puma_threads,          [4, 16]
+set :puma_threads,          [ 4, 16 ]
 set :puma_workers,          0
 set :puma_preload_app,      true
 set :puma_worker_timeout,   nil

@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer: one
+  bank_name: MyString
+  reason: MyText
+  use: MyText
+  satisfaction_level: 1
+  what_has: MyText
+  deadlines: MyText
+  amount: 9.99
+
+two:
+  customer: two
+  bank_name: MyString
+  reason: MyText
+  use: MyText
+  satisfaction_level: 1
+  what_has: MyText
+  deadlines: MyText
+  amount: 9.99

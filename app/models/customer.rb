@@ -6,8 +6,21 @@ class Customer < ApplicationRecord
   has_many :customer_objectives, dependent: :destroy
   has_many :customer_timeline_notes, dependent: :destroy
   has_many :calendar_events, dependent: :nullify
+  has_many :spouses, dependent: :destroy
+  has_many :children, dependent: :destroy
+  has_many :customer_expenses, dependent: :destroy
+  has_many :banks, dependent: :destroy
+  has_many :insurances, dependent: :destroy
+  has_many :properties, dependent: :destroy
 
-  enum :customer_type, { new_customer: 0, existing_customer: 1 }
+  accepts_nested_attributes_for :spouses, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :children, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :customer_expenses, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :banks, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :insurances, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :properties, allow_destroy: true, reject_if: :all_blank
+
+  enum :customer_type, { new_customer: 0, existing_customer: 1, previous_customer: 2 }
 
   validates :first_name, :last_name, :relationship_started_on, :customer_type, presence: true
 

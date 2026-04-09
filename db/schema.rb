@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_09_112324) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -41,6 +41,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
     t.index ["user_id"], name: "index_appointments_on_user_id"
   end
 
+  create_table "banks", force: :cascade do |t|
+    t.decimal "amount"
+    t.string "bank_name"
+    t.bigint "customer_id", null: false
+    t.text "deadlines"
+    t.text "reason"
+    t.decimal "rendimento"
+    t.integer "satisfaction_level"
+    t.text "use"
+    t.text "what_has"
+    t.index ["customer_id"], name: "index_banks_on_customer_id"
+  end
+
   create_table "calendar_events", force: :cascade do |t|
     t.integer "category", default: 0, null: false
     t.string "color"
@@ -60,6 +73,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
     t.index ["user_id"], name: "index_calendar_events_on_user_id"
   end
 
+  create_table "children", force: :cascade do |t|
+    t.integer "age"
+    t.decimal "annual_income"
+    t.date "birth_date"
+    t.bigint "customer_id", null: false
+    t.text "desires"
+    t.string "first_name"
+    t.string "last_name"
+    t.text "profession"
+    t.text "solutions"
+    t.index ["customer_id"], name: "index_children_on_customer_id"
+  end
+
   create_table "contact_calls", force: :cascade do |t|
     t.datetime "called_at", null: false
     t.datetime "created_at", null: false
@@ -70,6 +96,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
     t.bigint "user_id", null: false
     t.index ["customer_id"], name: "index_contact_calls_on_customer_id"
     t.index ["user_id"], name: "index_contact_calls_on_user_id"
+  end
+
+  create_table "customer_expenses", force: :cascade do |t|
+    t.decimal "amount"
+    t.integer "category"
+    t.bigint "customer_id", null: false
+    t.text "description"
+    t.string "expense_type"
+    t.index ["customer_id"], name: "index_customer_expenses_on_customer_id"
   end
 
   create_table "customer_objectives", force: :cascade do |t|
@@ -97,6 +132,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
 
   create_table "customers", force: :cascade do |t|
     t.boolean "active", default: true, null: false
+    t.decimal "annual_income"
     t.date "birth_date"
     t.datetime "created_at", null: false
     t.integer "customer_type", default: 0, null: false
@@ -105,7 +141,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
     t.text "passions"
     t.text "personal_summary"
     t.string "profession"
+    t.text "prospects"
     t.date "relationship_started_on", null: false
+    t.integer "satisfaction_level"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["profession"], name: "index_customers_on_profession"
@@ -127,6 +165,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
     t.index ["user_id"], name: "index_in_app_notifications_on_user_id"
   end
 
+  create_table "insurances", force: :cascade do |t|
+    t.decimal "amount"
+    t.bigint "customer_id", null: false
+    t.text "objective"
+    t.text "reason"
+    t.decimal "rendimento"
+    t.integer "satisfaction_level"
+    t.index ["customer_id"], name: "index_insurances_on_customer_id"
+  end
+
+  create_table "properties", force: :cascade do |t|
+    t.text "address"
+    t.bigint "customer_id", null: false
+    t.integer "purpose"
+    t.index ["customer_id"], name: "index_properties_on_customer_id"
+  end
+
   create_table "recurring_activities", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -140,6 +195,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
     t.bigint "user_id", null: false
     t.integer "weekday", default: 1, null: false
     t.index ["user_id"], name: "index_recurring_activities_on_user_id"
+  end
+
+  create_table "spouses", force: :cascade do |t|
+    t.integer "age"
+    t.decimal "annual_income"
+    t.date "birth_date"
+    t.bigint "customer_id", null: false
+    t.string "first_name"
+    t.string "last_name"
+    t.string "profession"
+    t.text "prospects"
+    t.index ["customer_id"], name: "index_spouses_on_customer_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -165,15 +232,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_000002) do
 
   add_foreign_key "appointments", "customers"
   add_foreign_key "appointments", "users"
+  add_foreign_key "banks", "customers"
   add_foreign_key "calendar_events", "customers"
   add_foreign_key "calendar_events", "users"
+  add_foreign_key "children", "customers"
   add_foreign_key "contact_calls", "customers"
   add_foreign_key "contact_calls", "users"
+  add_foreign_key "customer_expenses", "customers"
   add_foreign_key "customer_objectives", "customers"
   add_foreign_key "customer_timeline_notes", "customers"
   add_foreign_key "customer_timeline_notes", "users"
   add_foreign_key "customers", "users"
   add_foreign_key "in_app_notifications", "calendar_events"
   add_foreign_key "in_app_notifications", "users"
+  add_foreign_key "insurances", "customers"
+  add_foreign_key "properties", "customers"
   add_foreign_key "recurring_activities", "users"
+  add_foreign_key "spouses", "customers"
 end
