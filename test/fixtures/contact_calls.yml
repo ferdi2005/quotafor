@@ -5,6 +5,7 @@ one:
   user: one
   called_at: 2026-03-14 10:48:19
   scheduled_for: 2026-03-14 10:48:19
+  call_type: 0
   notes: MyText
 
 two:
@@ -12,4 +13,5 @@ two:
   user: two
   called_at: 2026-03-14 10:48:19
   scheduled_for: 2026-03-14 10:48:19
+  call_type: 1
   notes: MyText

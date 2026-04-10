@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_112324) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_09_183000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "appointments", force: :cascade do |t|
     t.integer "appointment_type", default: 0, null: false
     t.text "assistance_goal"
+    t.boolean "awaiting_bank_transfer", default: false, null: false
+    t.decimal "awaiting_bank_transfer_amount", precision: 10, scale: 2
     t.datetime "created_at", null: false
     t.bigint "customer_id", null: false
     t.text "deadlines"
@@ -24,6 +26,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_112324) do
     t.text "invested_resources"
     t.text "negative_reason"
     t.datetime "next_appointment_at"
+    t.boolean "next_appointment_callback", default: false, null: false
+    t.boolean "ok_current_account", default: false, null: false
     t.integer "outcome"
     t.text "presentation_notes"
     t.text "proposed_changes"
@@ -87,14 +91,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_112324) do
   end
 
   create_table "contact_calls", force: :cascade do |t|
+    t.integer "call_type", default: 0, null: false
     t.datetime "called_at", null: false
     t.datetime "created_at", null: false
     t.bigint "customer_id", null: false
+    t.bigint "generated_from_id"
     t.text "notes"
     t.datetime "scheduled_for"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["customer_id"], name: "index_contact_calls_on_customer_id"
+    t.index ["generated_from_id"], name: "index_contact_calls_on_generated_from_id", unique: true
     t.index ["user_id"], name: "index_contact_calls_on_user_id"
   end
 
@@ -112,22 +119,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_112324) do
     t.datetime "created_at", null: false
     t.bigint "customer_id", null: false
     t.text "description"
+    t.decimal "diminished_resources", precision: 12, scale: 2
+    t.decimal "invested_resources", precision: 12, scale: 2
     t.text "resources"
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_customer_objectives_on_customer_id"
-  end
-
-  create_table "customer_timeline_notes", force: :cascade do |t|
-    t.integer "category", default: 0, null: false
-    t.text "content", null: false
-    t.datetime "created_at", null: false
-    t.bigint "customer_id", null: false
-    t.datetime "happened_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["customer_id"], name: "index_customer_timeline_notes_on_customer_id"
-    t.index ["user_id"], name: "index_customer_timeline_notes_on_user_id"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -190,7 +187,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_112324) do
     t.text "notes"
     t.integer "periodicity", default: 1, null: false
     t.time "starts_at", null: false
-    t.integer "topic", default: 0, null: false
+    t.string "topic", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.integer "weekday", default: 1, null: false
@@ -223,6 +220,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_112324) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
+    t.decimal "rfa_expected", precision: 12, scale: 2, default: "0.0", null: false
     t.string "time_zone", default: "Europe/Rome", null: false
     t.datetime "updated_at", null: false
     t.index ["calendar_feed_token"], name: "index_users_on_calendar_feed_token", unique: true
@@ -236,12 +234,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_112324) do
   add_foreign_key "calendar_events", "customers"
   add_foreign_key "calendar_events", "users"
   add_foreign_key "children", "customers"
+  add_foreign_key "contact_calls", "contact_calls", column: "generated_from_id"
   add_foreign_key "contact_calls", "customers"
   add_foreign_key "contact_calls", "users"
   add_foreign_key "customer_expenses", "customers"
   add_foreign_key "customer_objectives", "customers"
-  add_foreign_key "customer_timeline_notes", "customers"
-  add_foreign_key "customer_timeline_notes", "users"
   add_foreign_key "customers", "users"
   add_foreign_key "in_app_notifications", "calendar_events"
   add_foreign_key "in_app_notifications", "users"

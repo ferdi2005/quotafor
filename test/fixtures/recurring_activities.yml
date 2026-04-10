@@ -2,7 +2,7 @@
 
 one:
   user: one
-  topic: 1
+  topic: Studio
   weekday: 1
   periodicity: 1
   starts_at: 2026-03-14 10:48:23
@@ -13,7 +13,7 @@ one:
 
 two:
   user: two
-  topic: 1
+  topic: Studio
   weekday: 1
   periodicity: 1
   starts_at: 2026-03-14 10:48:23

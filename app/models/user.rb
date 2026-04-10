@@ -8,9 +8,9 @@ class User < ApplicationRecord
   validates :calendar_feed_token, presence: true, uniqueness: true
 
   has_many :customers, dependent: :destroy
+  has_many :customer_objectives, through: :customers
   has_many :appointments, dependent: :destroy
   has_many :contact_calls, dependent: :destroy
-  has_many :customer_timeline_notes, dependent: :destroy
   has_many :recurring_activities, dependent: :destroy
   has_many :calendar_events, dependent: :destroy
   has_many :in_app_notifications, dependent: :destroy
@@ -22,6 +22,10 @@ class User < ApplicationRecord
       calendar_feed_token: SecureRandom.hex(24),
       feed_token_generated_at: Time.current
     )
+  end
+
+  def refresh_rfa_expected!
+    update!(rfa_expected: customer_objectives.sum(Arel.sql("COALESCE(invested_resources, 0) - COALESCE(diminished_resources, 0)")))
   end
 
   private

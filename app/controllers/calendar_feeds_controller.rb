@@ -32,6 +32,8 @@ class CalendarFeedsController < ApplicationController
     lines << "REFRESH-INTERVAL;VALUE=DURATION:P1D"
     lines << "X-PUBLISHED-TTL:P1D"
 
+    lines.concat(vtimezone_component)
+
     events.each do |event|
       lines << "BEGIN:VEVENT"
       lines << "UID:calendar-event-#{event.id}@#{calendar_uid_host}"
@@ -50,6 +52,29 @@ class CalendarFeedsController < ApplicationController
 
     lines << "END:VCALENDAR"
     lines.flat_map { |l| fold_line(l) }.join("\r\n") + "\r\n"
+  end
+
+  def vtimezone_component
+    [
+      "BEGIN:VTIMEZONE",
+      "TZID:Europe/Rome",
+      "X-LIC-LOCATION:Europe/Rome",
+      "BEGIN:DAYLIGHT",
+      "TZOFFSETFROM:+0100",
+      "TZOFFSETTO:+0200",
+      "TZNAME:CEST",
+      "DTSTART:19700329T020000",
+      "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU",
+      "END:DAYLIGHT",
+      "BEGIN:STANDARD",
+      "TZOFFSETFROM:+0200",
+      "TZOFFSETTO:+0100",
+      "TZNAME:CET",
+      "DTSTART:19701025T030000",
+      "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU",
+      "END:STANDARD",
+      "END:VTIMEZONE"
+    ]
   end
 
   # RFC 5545 §3.1: fold lines longer than 75 octets

@@ -10,18 +10,12 @@ class Appointment < ApplicationRecord
     return_meeting: 3
   }
   enum :status, { scheduled: 0, rescheduled: 1, completed: 2, canceled: 3 }
-  enum :outcome, { positive: 0, negative: 1 }, prefix: true
+  enum :outcome, { negative: 0, second_visit: 1, postponed: 2, call_back: 3 }, prefix: true
 
   validates :starts_at, :appointment_type, :status, presence: true
   validates :negative_reason,
             presence: { message: "obbligatorio se l'esito è negativo" },
             if: -> { outcome_negative? }
-  validates :presentation_notes,
-            presence: { message: "obbligatorio per il primo incontro" },
-            if: -> { first_meeting? && outcome.present? }
-  validates :visit_feedback,
-            presence: { message: "obbligatorio se l'esito è positivo" },
-            if: -> { outcome_positive? }
   validate :ends_at_after_starts_at
 
   scope :upcoming, -> { where("starts_at >= ?", Time.current).order(:starts_at) }

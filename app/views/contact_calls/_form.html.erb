@@ -11,6 +11,10 @@
 
   <div class="row g-3">
     <div class="col-md-6">
+      <%= f.label :call_type, "Tipo telefonata", class: "form-label" %>
+      <%= f.select :call_type, enum_options(ContactCall, :call_type), {}, class: "form-select" %>
+    </div>
+    <div class="col-md-6">
       <%= f.label :called_at, "Data e ora chiamata", class: "form-label" %>
       <%= f.datetime_local_field :called_at, class: "form-control" %>
     </div>

@@ -1,6 +1,6 @@
 <%= form_with model: customer, local: true do |f| %>
   <% if customer.errors.any? %>
-    <div class="alert alert-danger">
+    <div class="alert alert-danger mb-4">
       <ul class="mb-0">
         <% customer.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -9,299 +9,540 @@
     </div>
   <% end %>
 
-  <!-- Dati Cliente -->
-  <div class="row g-3 mb-4">
-    <div class="col-12">
-      <h3 class="h5 border-bottom pb-2">Dati Personali Cliente</h3>
-    </div>
-    <div class="col-md-6">
-      <%= f.label :first_name, "Nome", class: "form-label" %>
-      <%= f.text_field :first_name, class: "form-control" %>
-    </div>
-    <div class="col-md-6">
-      <%= f.label :last_name, "Cognome", class: "form-label" %>
-      <%= f.text_field :last_name, class: "form-control" %>
-    </div>
-    <div class="col-md-3">
-      <%= f.label :birth_date, "Data di nascita", class: "form-label" %>
-      <%= f.date_field :birth_date, class: "form-control" %>
-    </div>
-    <div class="col-md-3">
-      <%= f.label :profession, "Professione", class: "form-label" %>
-      <%= f.text_field :profession, class: "form-control" %>
-    </div>
-    <div class="col-md-3">
-      <%= f.label :prospects, "Prospettive", class: "form-label" %>
-      <%= f.text_area :prospects, class: "form-control", rows: 2 %>
-    </div>
-    <div class="col-md-3">
-      <%= f.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
-      <%= f.select :satisfaction_level,
-                   options_for_select((1..10).to_a, customer.satisfaction_level),
-                   { include_blank: "Seleziona..." },
-                   class: "form-select" %>
-    </div>
-    <div class="col-md-3">
-      <%= f.label :annual_income, "Incassi annuali da lavoro", class: "form-label" %>
-      <%= f.number_field :annual_income, step: :any, class: "form-control" %>
-    </div>
-    <div class="col-md-3">
-      <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
-      <%= f.date_field :relationship_started_on, class: "form-control" %>
-    </div>
-    <div class="col-md-2">
-      <%= f.label :customer_type, "Tipo cliente", class: "form-label" %>
-      <%= f.select :customer_type,
-                   options_for_select(enum_options(Customer, :customer_type), customer.customer_type),
-                   {},
-                   class: "form-select" %>
-    </div>
-    <div class="col-md-1 d-flex align-items-end">
-      <div class="form-check">
-        <%= f.check_box :active, class: "form-check-input" %>
-        <%= f.label :active, "Attivo", class: "form-check-label" %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h1 class="h4 mb-3">Nuovo cliente</h1>
+      <div class="row g-3">
+        <div class="col-12">
+          <h2 class="h6 text-uppercase text-muted mb-0">Dati personali</h2>
+        </div>
+        <div class="col-12 col-md-6">
+          <%= f.label :first_name, "Nome", class: "form-label" %>
+          <%= f.text_field :first_name, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-6">
+          <%= f.label :last_name, "Cognome", class: "form-label" %>
+          <%= f.text_field :last_name, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4">
+          <%= f.label :birth_date, "Data di nascita", class: "form-label" %>
+          <%= f.date_field :birth_date, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4">
+          <%= f.label :profession, "Professione", class: "form-label" %>
+          <%= f.text_field :profession, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4">
+          <%= f.label :annual_income, "Reddito annuo", class: "form-label" %>
+          <%= f.number_field :annual_income, step: :any, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4">
+          <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
+          <%= f.date_field :relationship_started_on, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4">
+          <%= f.label :customer_type, "Tipo cliente", class: "form-label" %>
+          <%= f.select :customer_type,
+                       options_for_select(enum_options(Customer, :customer_type), customer.customer_type),
+                       {},
+                       class: "form-select" %>
+        </div>
+        <div class="col-12 col-md-4 d-flex align-items-end">
+          <div class="form-check">
+            <%= f.check_box :active, class: "form-check-input" %>
+            <%= f.label :active, "Cliente attivo", class: "form-check-label" %>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <%= f.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
+          <%= f.select :satisfaction_level,
+                       options_for_select((1..10).to_a, customer.satisfaction_level),
+                       { include_blank: "Seleziona..." },
+                       class: "form-select" %>
+        </div>
+        <div class="col-12">
+          <%= f.label :prospects, "Prospettive", class: "form-label" %>
+          <%= f.text_area :prospects, class: "form-control", rows: 2 %>
+        </div>
+        <div class="col-12">
+          <%= f.label :passions, "Interessi / passioni", class: "form-label" %>
+          <%= f.text_area :passions, class: "form-control", rows: 2 %>
+        </div>
+        <div class="col-12">
+          <%= f.label :personal_summary, "Sintesi colloquio", class: "form-label" %>
+          <%= f.text_area :personal_summary, class: "form-control", rows: 3 %>
+        </div>
       </div>
-    </div>
-    <div class="col-12">
-      <%= f.label :passions, "Passioni / interessi", class: "form-label" %>
-      <%= f.text_area :passions, class: "form-control", rows: 2 %>
-    </div>
-    <div class="col-12">
-      <%= f.label :personal_summary, "Sintesi intervista", class: "form-label" %>
-      <%= f.text_area :personal_summary, class: "form-control", rows: 3 %>
     </div>
   </div>
 
-  <!-- Moglie -->
-  <div class="row g-3 mb-4">
-    <div class="col-12">
-      <h3 class="h5 border-bottom pb-2">Moglie</h3>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h2 class="h5 mb-3">Moglie</h2>
+      <%= f.fields_for :spouses do |spouse_form| %>
+        <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+          <%= spouse_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+          <div class="col-12 col-md-6 col-lg-3">
+            <%= spouse_form.label :first_name, "Nome", class: "form-label" %>
+            <%= spouse_form.text_field :first_name, class: "form-control" %>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <%= spouse_form.label :last_name, "Cognome", class: "form-label" %>
+            <%= spouse_form.text_field :last_name, class: "form-control" %>
+          </div>
+          <div class="col-12 col-md-4 col-lg-2">
+            <%= spouse_form.label :birth_date, "Data di nascita", class: "form-label" %>
+            <%= spouse_form.date_field :birth_date, class: "form-control" %>
+          </div>
+          <div class="col-12 col-md-4 col-lg-2">
+            <%= spouse_form.label :profession, "Professione", class: "form-label" %>
+            <%= spouse_form.text_field :profession, class: "form-control" %>
+          </div>
+          <div class="col-12 col-md-4 col-lg-2">
+            <%= spouse_form.label :annual_income, "Reddito annuo", class: "form-label" %>
+            <%= spouse_form.number_field :annual_income, step: :any, class: "form-control" %>
+          </div>
+          <div class="col-12">
+            <%= spouse_form.label :prospects, "Prospettive", class: "form-label" %>
+            <%= spouse_form.text_area :prospects, class: "form-control", rows: 2 %>
+          </div>
+          <div class="col-12 d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+          </div>
+        </div>
+      <% end %>
     </div>
-    <%= f.fields_for :spouses do |spouse_form| %>
-      <div class="col-md-3">
-        <%= spouse_form.label :first_name, "Nome", class: "form-label" %>
-        <%= spouse_form.text_field :first_name, class: "form-control" %>
-      </div>
-      <div class="col-md-3">
-        <%= spouse_form.label :last_name, "Cognome", class: "form-label" %>
-        <%= spouse_form.text_field :last_name, class: "form-control" %>
-      </div>
-      <div class="col-md-2">
-        <%= spouse_form.label :birth_date, "Età", class: "form-label" %>
-        <%= spouse_form.date_field :birth_date, class: "form-control" %>
-      </div>
-      <div class="col-md-2">
-        <%= spouse_form.label :profession, "Professione", class: "form-label" %>
-        <%= spouse_form.text_field :profession, class: "form-control" %>
-      </div>
-      <div class="col-md-2">
-        <%= spouse_form.label :annual_income, "Incassi annuali", class: "form-label" %>
-        <%= spouse_form.number_field :annual_income, step: :any, class: "form-control" %>
-      </div>
-      <div class="col-md-12">
-        <%= spouse_form.label :prospects, "Prospettive", class: "form-label" %>
-        <%= spouse_form.text_area :prospects, class: "form-control", rows: 2 %>
-      </div>
-      <div class="col-12">
-        <%= spouse_form.label :_destroy, class: "form-check-label" %>
-        <%= spouse_form.check_box :_destroy, class: "form-check-input" %>
-      </div>
-    <% end %>
   </div>
 
-  <!-- Figli -->
-  <div class="row g-3 mb-4">
-    <div class="col-12">
-      <h3 class="h5 border-bottom pb-2">Figli</h3>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Figli</h2>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-add-nested="children">Aggiungi figlio</button>
+      </div>
+      <div id="children-items">
+        <%= f.fields_for :children do |child_form| %>
+          <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+            <%= child_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= child_form.label :first_name, "Nome", class: "form-label" %>
+              <%= child_form.text_field :first_name, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= child_form.label :last_name, "Cognome", class: "form-label" %>
+              <%= child_form.text_field :last_name, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= child_form.label :birth_date, "Data di nascita", class: "form-label" %>
+              <%= child_form.date_field :birth_date, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= child_form.label :profession, "Professione", class: "form-label" %>
+              <%= child_form.text_field :profession, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= child_form.label :annual_income, "Reddito annuo", class: "form-label" %>
+              <%= child_form.number_field :annual_income, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-6">
+              <%= child_form.label :desires, "Desideri", class: "form-label" %>
+              <%= child_form.text_area :desires, class: "form-control", rows: 2 %>
+            </div>
+            <div class="col-12 col-md-6">
+              <%= child_form.label :solutions, "Soluzioni", class: "form-label" %>
+              <%= child_form.text_area :solutions, class: "form-control", rows: 2 %>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </div>
-    <%= f.fields_for :children do |child_form| %>
-      <div class="row g-2 mb-2 p-2 border rounded">
-        <div class="col-md-2">
+  </div>
+
+  <template id="children-template">
+    <%= f.fields_for :children, Child.new, child_index: "NEW_RECORD" do |child_form| %>
+      <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+        <%= child_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+        <div class="col-12 col-md-6 col-lg-3">
           <%= child_form.label :first_name, "Nome", class: "form-label" %>
           <%= child_form.text_field :first_name, class: "form-control" %>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-6 col-lg-3">
           <%= child_form.label :last_name, "Cognome", class: "form-label" %>
           <%= child_form.text_field :last_name, class: "form-control" %>
         </div>
-        <div class="col-md-1">
-          <%= child_form.label :birth_date, "Età", class: "form-label" %>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= child_form.label :birth_date, "Data di nascita", class: "form-label" %>
           <%= child_form.date_field :birth_date, class: "form-control" %>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-4 col-lg-2">
           <%= child_form.label :profession, "Professione", class: "form-label" %>
           <%= child_form.text_field :profession, class: "form-control" %>
         </div>
-        <div class="col-md-2">
-          <%= child_form.label :annual_income, "Incassi annuali", class: "form-label" %>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= child_form.label :annual_income, "Reddito annuo", class: "form-label" %>
           <%= child_form.number_field :annual_income, step: :any, class: "form-control" %>
         </div>
-        <div class="col-md-1">
-          <%= child_form.label :_destroy, class: "form-check-label" %>
-          <%= child_form.check_box :_destroy, class: "form-check-input" %>
-        </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-6">
           <%= child_form.label :desires, "Desideri", class: "form-label" %>
-          <%= child_form.text_area :desires, class: "form-control", rows: 1 %>
+          <%= child_form.text_area :desires, class: "form-control", rows: 2 %>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-6">
           <%= child_form.label :solutions, "Soluzioni", class: "form-label" %>
-          <%= child_form.text_area :solutions, class: "form-control", rows: 1 %>
+          <%= child_form.text_area :solutions, class: "form-control", rows: 2 %>
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
         </div>
       </div>
     <% end %>
+  </template>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Costi sostenuti</h2>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-add-nested="customer_expenses">Aggiungi costo</button>
+      </div>
+      <div id="customer-expenses-items">
+        <%= f.fields_for :customer_expenses do |expense_form| %>
+          <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+            <%= expense_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= expense_form.label :expense_type, "Tipo spesa", class: "form-label" %>
+              <%= expense_form.text_field :expense_type, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-3 col-lg-2">
+              <%= expense_form.label :amount, "Importo", class: "form-label" %>
+              <%= expense_form.number_field :amount, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= expense_form.label :category, "Categoria", class: "form-label" %>
+              <%= expense_form.select :category,
+                                       options_for_select(enum_options(CustomerExpense, :category), expense_form.object.category),
+                                       { include_blank: "Seleziona..." },
+                                       class: "form-select" %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+              <%= expense_form.label :description, "Descrizione", class: "form-label" %>
+              <%= expense_form.text_field :description, class: "form-control" %>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <!-- Spese -->
-  <div class="row g-3 mb-4">
-    <div class="col-12">
-      <h3 class="h5 border-bottom pb-2">Costi Sostenuti</h3>
-    </div>
-    <%= f.fields_for :customer_expenses do |expense_form| %>
-      <div class="row g-2 mb-2 p-2 border rounded">
-        <div class="col-md-2">
+  <template id="customer-expenses-template">
+    <%= f.fields_for :customer_expenses, CustomerExpense.new, child_index: "NEW_RECORD" do |expense_form| %>
+      <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+        <%= expense_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+        <div class="col-12 col-md-6 col-lg-3">
           <%= expense_form.label :expense_type, "Tipo spesa", class: "form-label" %>
           <%= expense_form.text_field :expense_type, class: "form-control" %>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-3 col-lg-2">
           <%= expense_form.label :amount, "Importo", class: "form-label" %>
           <%= expense_form.number_field :amount, step: :any, class: "form-control" %>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-md-6 col-lg-3">
           <%= expense_form.label :category, "Categoria", class: "form-label" %>
           <%= expense_form.select :category,
                                    options_for_select(enum_options(CustomerExpense, :category), expense_form.object.category),
                                    { include_blank: "Seleziona..." },
                                    class: "form-select" %>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-md-6 col-lg-4">
           <%= expense_form.label :description, "Descrizione", class: "form-label" %>
           <%= expense_form.text_field :description, class: "form-control" %>
         </div>
-        <div class="col-md-1 d-flex align-items-end">
-          <%= expense_form.label :_destroy, class: "form-check-label" %>
-          <%= expense_form.check_box :_destroy, class: "form-check-input" %>
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
         </div>
       </div>
     <% end %>
+  </template>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Banche</h2>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-add-nested="banks">Aggiungi banca</button>
+      </div>
+      <div id="banks-items">
+        <%= f.fields_for :banks do |bank_form| %>
+          <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+            <%= bank_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= bank_form.label :bank_name, "Banca", class: "form-label" %>
+              <%= bank_form.text_field :bank_name, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= bank_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
+              <%= bank_form.select :satisfaction_level,
+                                   options_for_select((1..10).to_a, bank_form.object.satisfaction_level),
+                                   { include_blank: "..." },
+                                   class: "form-select" %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+              <%= bank_form.label :reason, "Motivo", class: "form-label" %>
+              <%= bank_form.text_area :reason, class: "form-control", rows: 1 %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= bank_form.label :use, "Uso", class: "form-label" %>
+              <%= bank_form.text_area :use, class: "form-control", rows: 1 %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+              <%= bank_form.label :what_has, "Patrimonio disponibile", class: "form-label" %>
+              <%= bank_form.text_area :what_has, class: "form-control", rows: 1 %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= bank_form.label :amount, "Importo", class: "form-label" %>
+              <%= bank_form.number_field :amount, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= bank_form.label :rendimento, "Rendimento", class: "form-label" %>
+              <%= bank_form.number_field :rendimento, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= bank_form.label :deadlines, "Scadenze", class: "form-label" %>
+              <%= bank_form.text_field :deadlines, class: "form-control" %>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <!-- Banche -->
-  <div class="row g-3 mb-4">
-    <div class="col-12">
-      <h3 class="h5 border-bottom pb-2">Banche</h3>
-    </div>
-    <%= f.fields_for :banks do |bank_form| %>
-      <div class="row g-2 mb-2 p-2 border rounded">
-        <div class="col-md-2">
+  <template id="banks-template">
+    <%= f.fields_for :banks, Bank.new, child_index: "NEW_RECORD" do |bank_form| %>
+      <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+        <%= bank_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+        <div class="col-12 col-md-6 col-lg-3">
           <%= bank_form.label :bank_name, "Banca", class: "form-label" %>
           <%= bank_form.text_field :bank_name, class: "form-control" %>
         </div>
-        <div class="col-md-1">
-          <%= bank_form.label :satisfaction_level, "Soddisfazione", class: "form-label" %>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= bank_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
           <%= bank_form.select :satisfaction_level,
                                options_for_select((1..10).to_a, bank_form.object.satisfaction_level),
                                { include_blank: "..." },
-                               class: "form-select form-select-sm" %>
+                               class: "form-select" %>
         </div>
-        <div class="col-md-2">
-          <%= bank_form.label :reason, "Perché", class: "form-label" %>
+        <div class="col-12 col-md-6 col-lg-4">
+          <%= bank_form.label :reason, "Motivo", class: "form-label" %>
           <%= bank_form.text_area :reason, class: "form-control", rows: 1 %>
         </div>
-        <div class="col-md-2">
-          <%= bank_form.label :use, "Causa/Uso", class: "form-label" %>
+        <div class="col-12 col-md-6 col-lg-3">
+          <%= bank_form.label :use, "Uso", class: "form-label" %>
           <%= bank_form.text_area :use, class: "form-control", rows: 1 %>
         </div>
-        <div class="col-md-2">
-          <%= bank_form.label :what_has, "Cosa ha", class: "form-label" %>
+        <div class="col-12 col-md-6 col-lg-4">
+          <%= bank_form.label :what_has, "Patrimonio disponibile", class: "form-label" %>
           <%= bank_form.text_area :what_has, class: "form-control", rows: 1 %>
         </div>
-        <div class="col-md-1">
+        <div class="col-12 col-md-4 col-lg-2">
           <%= bank_form.label :amount, "Importo", class: "form-label" %>
-          <%= bank_form.number_field :amount, step: :any, class: "form-control form-control-sm" %>
+          <%= bank_form.number_field :amount, step: :any, class: "form-control" %>
         </div>
-        <div class="col-md-1">
+        <div class="col-12 col-md-4 col-lg-2">
           <%= bank_form.label :rendimento, "Rendimento", class: "form-label" %>
-          <%= bank_form.number_field :rendimento, step: :any, class: "form-control form-control-sm" %>
+          <%= bank_form.number_field :rendimento, step: :any, class: "form-control" %>
         </div>
-        <div class="col-md-1">
+        <div class="col-12 col-md-4 col-lg-2">
           <%= bank_form.label :deadlines, "Scadenze", class: "form-label" %>
-          <%= bank_form.text_field :deadlines, class: "form-control form-control-sm" %>
+          <%= bank_form.text_field :deadlines, class: "form-control" %>
         </div>
-        <div class="col-md-1 d-flex align-items-end">
-          <%= bank_form.label :_destroy, class: "form-check-label" %>
-          <%= bank_form.check_box :_destroy, class: "form-check-input" %>
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
         </div>
       </div>
     <% end %>
+  </template>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Previdenza</h2>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-add-nested="insurances">Aggiungi previdenza</button>
+      </div>
+      <div id="insurances-items">
+        <%= f.fields_for :insurances do |insurance_form| %>
+          <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+            <%= insurance_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= insurance_form.label :reason, "Motivo", class: "form-label" %>
+              <%= insurance_form.text_area :reason, class: "form-control", rows: 1 %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= insurance_form.label :objective, "Obiettivo", class: "form-label" %>
+              <%= insurance_form.text_area :objective, class: "form-control", rows: 1 %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= insurance_form.label :amount, "Importo", class: "form-label" %>
+              <%= insurance_form.number_field :amount, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= insurance_form.label :rendimento, "Rendimento", class: "form-label" %>
+              <%= insurance_form.number_field :rendimento, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= insurance_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
+              <%= insurance_form.select :satisfaction_level,
+                                        options_for_select((1..10).to_a, insurance_form.object.satisfaction_level),
+                                        { include_blank: "..." },
+                                        class: "form-select" %>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <!-- Previdenza -->
-  <div class="row g-3 mb-4">
-    <div class="col-12">
-      <h3 class="h5 border-bottom pb-2">Previdenza</h3>
-    </div>
-    <%= f.fields_for :insurances do |insurance_form| %>
-      <div class="row g-2 mb-2 p-2 border rounded">
-        <div class="col-md-3">
-          <%= insurance_form.label :reason, "Perché", class: "form-label" %>
+  <template id="insurances-template">
+    <%= f.fields_for :insurances, Insurance.new, child_index: "NEW_RECORD" do |insurance_form| %>
+      <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+        <%= insurance_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+        <div class="col-12 col-md-6 col-lg-3">
+          <%= insurance_form.label :reason, "Motivo", class: "form-label" %>
           <%= insurance_form.text_area :reason, class: "form-control", rows: 1 %>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-md-6 col-lg-3">
           <%= insurance_form.label :objective, "Obiettivo", class: "form-label" %>
           <%= insurance_form.text_area :objective, class: "form-control", rows: 1 %>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-4 col-lg-2">
           <%= insurance_form.label :amount, "Importo", class: "form-label" %>
           <%= insurance_form.number_field :amount, step: :any, class: "form-control" %>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-md-4 col-lg-2">
           <%= insurance_form.label :rendimento, "Rendimento", class: "form-label" %>
           <%= insurance_form.number_field :rendimento, step: :any, class: "form-control" %>
         </div>
-        <div class="col-md-2">
-          <%= insurance_form.label :satisfaction_level, "Soddisfazione", class: "form-label" %>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= insurance_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
           <%= insurance_form.select :satisfaction_level,
                                     options_for_select((1..10).to_a, insurance_form.object.satisfaction_level),
                                     { include_blank: "..." },
                                     class: "form-select" %>
         </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <%= insurance_form.label :_destroy, class: "form-check-label" %>
-          <%= insurance_form.check_box :_destroy, class: "form-check-input" %>
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
         </div>
       </div>
     <% end %>
+  </template>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Immobili</h2>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-add-nested="properties">Aggiungi immobile</button>
+      </div>
+      <div id="properties-items">
+        <%= f.fields_for :properties do |property_form| %>
+          <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+            <%= property_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+            <div class="col-12 col-md-4 col-lg-3">
+              <%= property_form.label :purpose, "Finalità", class: "form-label" %>
+              <%= property_form.select :purpose,
+                                       options_for_select(enum_options(Property, :purpose), property_form.object.purpose),
+                                       { include_blank: "Seleziona..." },
+                                       class: "form-select" %>
+            </div>
+            <div class="col-12 col-md-8 col-lg-7">
+              <%= property_form.label :address, "Indirizzo", class: "form-label" %>
+              <%= property_form.text_field :address, class: "form-control" %>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <!-- Immobili -->
-  <div class="row g-3 mb-4">
-    <div class="col-12">
-      <h3 class="h5 border-bottom pb-2">Immobili</h3>
-    </div>
-    <%= f.fields_for :properties do |property_form| %>
-      <div class="row g-2 mb-2 p-2 border rounded">
-        <div class="col-md-2">
-          <%= property_form.label :purpose, "Scopo", class: "form-label" %>
+  <template id="properties-template">
+    <%= f.fields_for :properties, Property.new, child_index: "NEW_RECORD" do |property_form| %>
+      <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+        <%= property_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+        <div class="col-12 col-md-4 col-lg-3">
+          <%= property_form.label :purpose, "Finalità", class: "form-label" %>
           <%= property_form.select :purpose,
                                    options_for_select(enum_options(Property, :purpose), property_form.object.purpose),
                                    { include_blank: "Seleziona..." },
                                    class: "form-select" %>
         </div>
-        <div class="col-md-9">
+        <div class="col-12 col-md-8 col-lg-7">
           <%= property_form.label :address, "Indirizzo", class: "form-label" %>
           <%= property_form.text_field :address, class: "form-control" %>
         </div>
-        <div class="col-md-1 d-flex align-items-end">
-          <%= property_form.label :_destroy, class: "form-check-label" %>
-          <%= property_form.check_box :_destroy, class: "form-check-input" %>
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
         </div>
       </div>
     <% end %>
-  </div>
+  </template>
 
   <div class="d-flex gap-2 mt-4">
     <%= f.submit class: "btn btn-primary" %>
     <%= link_to "Annulla", dashboard_path, class: "btn btn-outline-secondary" %>
   </div>
 <% end %>
+
+<script>
+(function () {
+  function uniqueId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+  }
+
+  function addNestedItem(listId, templateId) {
+    var list = document.getElementById(listId);
+    var template = document.getElementById(templateId);
+    if (!list || !template) return;
+
+    var html = template.innerHTML.split('NEW_RECORD').join(uniqueId());
+    list.insertAdjacentHTML('beforeend', html);
+  }
+
+  document.querySelectorAll('[data-add-nested]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var key = button.getAttribute('data-add-nested');
+      var listId = key.replace(/_/g, '-') + '-items';
+      var templateId = key.replace(/_/g, '-') + '-template';
+      addNestedItem(listId, templateId);
+    });
+  });
+
+  document.addEventListener('click', function (event) {
+    var removeButton = event.target.closest('[data-remove-nested]');
+    if (!removeButton) return;
+
+    var item = removeButton.closest('[data-nested-item]');
+    if (!item) return;
+
+    var destroyField = item.querySelector('.nested-destroy-field');
+    var persistedRecord = item.querySelector('input[name*="[id]"]');
+
+    if (destroyField && persistedRecord) {
+      destroyField.value = '1';
+      item.classList.add('d-none');
+      return;
+    }
+
+    item.remove();
+  });
+})();
+</script>

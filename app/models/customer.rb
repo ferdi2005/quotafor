@@ -4,7 +4,6 @@ class Customer < ApplicationRecord
   has_many :appointments, dependent: :destroy
   has_many :contact_calls, dependent: :destroy
   has_many :customer_objectives, dependent: :destroy
-  has_many :customer_timeline_notes, dependent: :destroy
   has_many :calendar_events, dependent: :nullify
   has_many :spouses, dependent: :destroy
   has_many :children, dependent: :destroy
@@ -42,5 +41,17 @@ class Customer < ApplicationRecord
     years = now.year - birth_date.year
     years -= 1 if now.yday < birth_date.yday
     years
+  end
+
+  def total_income
+    [annual_income, spouses.sum(:annual_income), children.sum(:annual_income)].compact.sum
+  end
+
+  def total_expenses
+    customer_expenses.sum(:amount)
+  end
+
+  def savings
+    total_income - total_expenses
   end
 end

@@ -9,7 +9,6 @@ class CustomersController < ApplicationController
   def show
     @appointments = @customer.appointments.order(starts_at: :desc)
     @contact_calls = @customer.contact_calls.order(called_at: :desc)
-    @timeline_notes = @customer.customer_timeline_notes.order(happened_at: :desc)
   end
 
   def new

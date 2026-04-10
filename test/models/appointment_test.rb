@@ -61,36 +61,34 @@ class AppointmentTest < ActiveSupport::TestCase
     assert appt.errors[:negative_reason].present?
   end
 
-  test "negative_reason not required when outcome is positive" do
+  test "negative_reason not required when outcome is second_visit" do
     appt = Appointment.new(
       user: @user, customer: @customer,
       starts_at: 1.hour.from_now, ends_at: 2.hours.from_now,
       appointment_type: :first_meeting, status: :completed,
-      outcome: :positive, visit_feedback: "Ottimo colloquio", presentation_notes: "Presentato portafoglio"
+      outcome: :second_visit
     )
     assert appt.valid?
   end
 
-  test "visit_feedback required when outcome is positive" do
+  test "visit_feedback is optional for second_visit" do
     appt = Appointment.new(
       user: @user, customer: @customer,
       starts_at: 1.hour.from_now, ends_at: 2.hours.from_now,
       appointment_type: :follow_up, status: :completed,
-      outcome: :positive, visit_feedback: nil
+      outcome: :second_visit, visit_feedback: nil
     )
-    assert_not appt.valid?
-    assert appt.errors[:visit_feedback].present?
+    assert appt.valid?
   end
 
-  test "presentation_notes required for first_meeting when outcome is set" do
+  test "presentation_notes is optional now" do
     appt = Appointment.new(
       user: @user, customer: @customer,
       starts_at: 1.hour.from_now, ends_at: 2.hours.from_now,
       appointment_type: :first_meeting, status: :completed,
       outcome: :negative, negative_reason: "Cliente non interessato", presentation_notes: nil
     )
-    assert_not appt.valid?
-    assert appt.errors[:presentation_notes].present?
+    assert appt.valid?
   end
 
   # ---- Callbacks ----

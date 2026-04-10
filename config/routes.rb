@@ -16,7 +16,6 @@ Rails.application.routes.draw do
     resources :appointments, only: %i[new create edit update destroy]
     resources :contact_calls, only: %i[new create edit update destroy]
     resources :customer_objectives, only: %i[new create edit update destroy]
-    resources :customer_timeline_notes, only: %i[new create destroy]
   end
   resources :in_app_notifications, only: %i[index] do
     member do

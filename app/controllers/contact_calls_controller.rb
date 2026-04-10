@@ -4,7 +4,7 @@ class ContactCallsController < ApplicationController
   before_action :set_contact_call, only: %i[edit update destroy]
 
   def new
-    @contact_call = @customer.contact_calls.new(user: current_user, called_at: Time.current)
+    @contact_call = @customer.contact_calls.new(user: current_user, called_at: Time.current, call_type: :first_visit)
   end
 
   def create
@@ -42,6 +42,6 @@ class ContactCallsController < ApplicationController
   end
 
   def contact_call_params
-    params.require(:contact_call).permit(:called_at, :scheduled_for, :notes)
+    params.require(:contact_call).permit(:called_at, :scheduled_for, :notes, :call_type)
   end
 end

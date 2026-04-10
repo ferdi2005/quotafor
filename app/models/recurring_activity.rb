@@ -2,16 +2,6 @@ class RecurringActivity < ApplicationRecord
   belongs_to :user
   has_many :calendar_events, as: :source, dependent: :destroy
 
-  enum :topic, {
-    phone_calls: 0,
-    study: 1,
-    visit_preparation: 2,
-    one_to_one_meeting: 3,
-    team_meeting: 4,
-    area_plenary: 5,
-    personal_administration: 6,
-    personal_space: 7
-  }
   enum :periodicity, { daily: 0, weekly: 1, monthly: 2 }
   enum :weekday, {
     monday: 1,
@@ -47,8 +37,8 @@ class RecurringActivity < ApplicationRecord
 
       calendar_events.create!(
         user: user,
-        title: "Attività - #{topic.humanize}",
-        description: notes.presence || "Attività ricorrente #{topic.humanize}",
+        title: "Attività - #{topic}",
+        description: notes.presence || "Attività ricorrente #{topic}",
         starts_at: start_time,
         ends_at: end_time,
         category: :recurring_activity,
@@ -89,15 +79,6 @@ class RecurringActivity < ApplicationRecord
   end
 
   def recurring_color
-    {
-      "phone_calls" => "#fd7e14",
-      "study" => "#6f42c1",
-      "visit_preparation" => "#20c997",
-      "one_to_one_meeting" => "#0dcaf0",
-      "team_meeting" => "#198754",
-      "area_plenary" => "#6610f2",
-      "personal_administration" => "#6c757d",
-      "personal_space" => "#ffc107"
-    }.fetch(topic, "#0d6efd")
+    "#0d6efd"
   end
 end

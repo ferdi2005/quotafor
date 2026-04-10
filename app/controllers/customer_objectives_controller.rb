@@ -42,6 +42,6 @@ class CustomerObjectivesController < ApplicationController
   end
 
   def objective_params
-    params.require(:customer_objective).permit(:title, :description, :resources, :active)
+    params.require(:customer_objective).permit(:title, :description, :resources, :invested_resources, :diminished_resources, :active)
   end
 end

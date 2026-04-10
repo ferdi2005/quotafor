@@ -22,6 +22,14 @@
       <%= f.label :resources, "Risorse necessarie", class: "form-label" %>
       <%= f.text_area :resources, class: "form-control", rows: 2 %>
     </div>
+    <div class="col-md-6">
+      <%= f.label :invested_resources, "Risorse investite (€)", class: "form-label" %>
+      <%= f.number_field :invested_resources, step: 0.01, min: 0, class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :diminished_resources, "Risorse diminuite (€)", class: "form-label" %>
+      <%= f.number_field :diminished_resources, step: 0.01, min: 0, class: "form-control" %>
+    </div>
     <div class="col-12">
       <div class="form-check">
         <%= f.check_box :active, class: "form-check-input" %>

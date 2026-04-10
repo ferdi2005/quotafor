@@ -17,6 +17,14 @@ it:
     am: "am"
     pm: "pm"
 
+  number:
+    currency:
+      format:
+        unit: "€"
+        format: "%n %u"
+        separator: ","
+        delimiter: "."
+
   # Modelli
   activerecord:
     models:
@@ -27,7 +35,6 @@ it:
       calendar_event: "Evento calendario"
       recurring_activity: "Attività ricorrente"
       customer_objective: "Obiettivo"
-      customer_timeline_note: "Nota timeline"
       in_app_notification: "Notifica"
       spouse: "Moglie"
       child: "Figlio/a"
@@ -103,6 +110,7 @@ it:
         referral: "Referral"
         next_appointment_notes: "Note prossimo appuntamento"
       contact_call:
+        call_type: "Tipo telefonata"
         scheduled_at: "Data e ora"
         notes: "Note"
         outcome: "Esito"
@@ -119,43 +127,43 @@ it:
         ends_at: "Fine"
         category: "Categoria"
         description: "Descrizione"
-      customer_timeline_note:
-        category: "Tipo nota"
-        content: "Contenuto"
-        happened_at: "Data"
-
   # Traduzioni enum
   enums:
     customer:
       customer_type:
         new_customer: "Prospect"
         existing_customer: "Cliente esistente"
-        previous_customer: "Cliente precedente"
+        previous_customer: "Cliente passato"
     appointment:
       appointment_type:
         first_meeting: "Primo incontro"
-        follow_up: "Follow-up"
+        follow_up: "Secondo incontro"
         assistance: "Assistenza"
         return_meeting: "Rientro"
       status:
         scheduled: "Pianificato"
-        rescheduled: "Ripianificato"
+        rescheduled: "Rimandato"
         completed: "Completato"
         canceled: "Annullato"
       outcome:
-        positive: "Positivo"
         negative: "Negativo"
+        second_visit: "Seconda visita"
+        postponed: "Rimandato"
+        call_back: "Richiamare"
+      ok_current_account: "OK conto corrente"
+      awaiting_bank_transfer: "Attesa bonifico"
+      awaiting_bank_transfer_amount: "Importo attesa bonifico"
+      next_appointment_callback: "Richiamare"
     calendar_event:
       category:
         customer_appointment: "Appuntamento cliente"
         recurring_activity: "Attività ricorrente"
         assistance: "Assistenza"
-    customer_timeline_note:
-      category:
-        call_note: "Nota telefonata"
-        interview_summary: "Sintesi colloquio"
-        visit_summary: "Sintesi visita"
-        personal_update: "Aggiornamento personale"
+    contact_call:
+      call_type:
+        first_visit: "Prima visita"
+        second_visit: "Seconda visita"
+        assistance: "Assistenza"
     recurring_activity:
       topic:
         phone_calls: "Telefonate"
@@ -219,9 +227,6 @@ it:
       customer_objective:
         create: "Crea obiettivo"
         update: "Salva obiettivo"
-      customer_timeline_note:
-        create: "Aggiungi nota"
-        update: "Salva nota"
       recurring_activity:
         create: "Crea attività"
         update: "Salva attività"

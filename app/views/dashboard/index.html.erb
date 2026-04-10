@@ -15,6 +15,25 @@
 </div>
 
 <div class="row g-3 mb-3">
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <p class="text-muted mb-1">Numero contratti</p>
+        <p class="h3 mb-0"><%= @contracts_count %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <p class="text-muted mb-1">RFA totale</p>
+        <p class="h3 mb-0"><%= number_to_currency(@rfa_total) %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
   <div class="col-12">
     <div class="card shadow-sm">
       <div class="card-body">
@@ -71,6 +90,8 @@
                 <th>Professione</th>
                 <th>Data inizio</th>
                 <th>Tipo</th>
+                <th>Contratti</th>
+                <th>RFA cliente</th>
                 <th>Prossimo appuntamento</th>
               </tr>
             </thead>
@@ -78,18 +99,22 @@
               <% if @customers.any? %>
                 <% @customers.each do |customer| %>
                   <% next_appointment = customer.appointments.upcoming.first %>
+                  <% contracts_count = customer.customer_objectives.size %>
+                  <% customer_rfa = customer.customer_objectives.sum { |objective| objective.invested_resources.to_d - objective.diminished_resources.to_d } %>
                   <tr>
                     <td><%= link_to customer.full_name, customer_path(customer), class: "fw-semibold text-decoration-none" %></td>
                     <td><%= customer.age || "-" %></td>
                     <td><%= customer.profession.presence || "-" %></td>
                     <td><%= l(customer.relationship_started_on) %></td>
                     <td><%= enum_t(customer, :customer_type) %></td>
+                    <td><%= link_to contracts_count, customer_path(customer, anchor: "customer-objectives"), class: "text-decoration-none fw-semibold" %></td>
+                    <td><%= number_to_currency(customer_rfa) %></td>
                     <td><%= next_appointment ? l(next_appointment.starts_at, format: :short) : "-" %></td>
                   </tr>
                 <% end %>
               <% else %>
                 <tr>
-                  <td colspan="6" class="text-center text-muted py-4">Nessun cliente trovato con i filtri selezionati.</td>
+                  <td colspan="8" class="text-center text-muted py-4">Nessun cliente trovato con i filtri selezionati.</td>
                 </tr>
               <% end %>
             </tbody>

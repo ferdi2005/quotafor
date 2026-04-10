@@ -26,6 +26,32 @@ class CalendarFeedsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "STATUS:CONFIRMED"
   end
 
+  test "GET feed includes at least one RFC 5545 calendar component" do
+    get calendar_feed_path(token: @user.calendar_feed_token, format: :ics)
+    assert_response :success
+
+    # RFC 5545 3.6: VCALENDAR must contain at least one calendar component.
+    assert_match(/BEGIN:(VEVENT|VTODO|VJOURNAL|VFREEBUSY|VTIMEZONE)/, response.body)
+  end
+
+  test "GET feed for user without events still includes calendar component" do
+    user_without_events = User.create!(
+      email: "calendar-empty@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      time_zone: "Europe/Rome"
+    )
+
+    get calendar_feed_path(token: user_without_events.calendar_feed_token, format: :ics)
+    assert_response :success
+
+    assert_includes response.body, "BEGIN:VCALENDAR"
+    assert_includes response.body, "BEGIN:VTIMEZONE"
+    assert_includes response.body, "END:VTIMEZONE"
+    assert_includes response.body, "END:VCALENDAR"
+    assert_match(/BEGIN:(VEVENT|VTODO|VJOURNAL|VFREEBUSY|VTIMEZONE)/, response.body)
+  end
+
   test "GET feed with invalid token returns 404" do
     get calendar_feed_path(token: "invalid-nonexistent-token", format: :ics)
     assert_response :not_found

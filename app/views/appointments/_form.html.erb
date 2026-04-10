@@ -23,7 +23,11 @@
     <div class="col-md-4">
       <%= f.label :appointment_type, "Tipologia appuntamento", class: "form-label" %>
       <%= f.select :appointment_type,
-                   options_for_select(enum_options(Appointment, :appointment_type), @appointment.appointment_type),
+                   options_for_select([
+                     ["Primo incontro", "first_meeting"],
+                     ["Secondo incontro", "follow_up"],
+                     ["Assistenza", "assistance"]
+                   ], @appointment.appointment_type),
                    {},
                    class: "form-select", id: "appt_type_select" %>
     </div>
@@ -37,12 +41,12 @@
     <div class="col-md-4">
       <%= f.label :outcome, "Esito", class: "form-label" %>
       <%= f.select :outcome,
-                   options_for_select([["Da definire", ""]].concat(enum_options(Appointment, :outcome)), @appointment.outcome),
+                   options_for_select([['Da definire', '']].concat(enum_options(Appointment, :outcome)), @appointment.outcome),
                    {},
                    class: "form-select", id: "appt_outcome_select" %>
     </div>
 
-    <%# Sezione: Riunione (primo incontro, follow-up, rientro) %>
+    <%# Sezione: Riunione (primo incontro, secondo incontro) %>
     <div id="section-meeting" class="col-12">
       <div class="row g-3">
         <div class="col-12">
@@ -51,17 +55,8 @@
                           id: "appt_visit_feedback" %>
         </div>
         <div class="col-12">
-          <%= f.label :presentation_notes, "Note presentazione soluzioni", class: "form-label" %>
-          <%= f.text_area :presentation_notes, class: "form-control", rows: 3,
-                          id: "appt_presentation_notes" %>
-        </div>
-        <div class="col-md-6">
           <%= f.label :invested_resources, "Risorse investite", class: "form-label" %>
           <%= f.text_area :invested_resources, class: "form-control", rows: 2 %>
-        </div>
-        <div class="col-md-6">
-          <%= f.label :deadlines, "Scadenze", class: "form-label" %>
-          <%= f.text_area :deadlines, class: "form-control", rows: 2 %>
         </div>
         <div class="col-md-6">
           <%= f.label :referrals, "Referral ricevuti", class: "form-label" %>
@@ -70,6 +65,28 @@
         <div class="col-md-6">
           <%= f.label :next_appointment_at, "Prossimo appuntamento", class: "form-label" %>
           <%= f.datetime_local_field :next_appointment_at, class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check mt-2">
+            <%= f.check_box :ok_current_account, class: "form-check-input", id: "appt_ok_current_account" %>
+            <%= f.label :ok_current_account, "OK conto corrente", class: "form-check-label" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check mt-2">
+            <%= f.check_box :awaiting_bank_transfer, class: "form-check-input", id: "appt_awaiting_bank_transfer" %>
+            <%= f.label :awaiting_bank_transfer, "Attesa bonifico", class: "form-check-label" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :awaiting_bank_transfer_amount, "Importo attesa bonifico (€)", class: "form-label" %>
+          <%= f.number_field :awaiting_bank_transfer_amount, class: "form-control", step: "0.01", min: 0 %>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check mt-2">
+            <%= f.check_box :next_appointment_callback, class: "form-check-input", id: "appt_next_appointment_callback" %>
+            <%= f.label :next_appointment_callback, "Richiamare", class: "form-check-label" %>
+          </div>
         </div>
       </div>
     </div>
@@ -114,8 +131,6 @@
   var secAssist     = document.getElementById('section-assistance');
   var secNegative   = document.getElementById('section-negative');
   var negTextarea   = document.getElementById('appt_negative_reason');
-  var feedbackTA    = document.getElementById('appt_visit_feedback');
-  var presentTA     = document.getElementById('appt_presentation_notes');
 
   function updateType() {
     var isAssist = typeSelect.value === 'assistance';
@@ -127,14 +142,9 @@
   function updateOutcome() {
     var outcome      = outcomeSelect.value;
     var isNegative   = outcome === 'negative';
-    var isPositive   = outcome === 'positive';
-    var isFirstMtg   = typeSelect.value === 'first_meeting';
-    var hasOutcome   = outcome !== '';
 
     secNegative.classList.toggle('d-none', !isNegative);
     negTextarea.required   = isNegative;
-    feedbackTA.required    = isPositive;
-    presentTA.required     = isFirstMtg && hasOutcome;
   }
 
   typeSelect.addEventListener('change', updateType);

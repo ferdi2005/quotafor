@@ -12,10 +12,7 @@
   <div class="row g-3">
     <div class="col-md-6">
       <%= f.label :topic, "Argomento", class: "form-label" %>
-      <%= f.select :topic,
-            options_for_select(enum_options(RecurringActivity, :topic), recurring_activity.topic),
-            {},
-            class: "form-select" %>
+      <%= f.text_field :topic, class: "form-control", placeholder: "Inserisci argomento" %>
     </div>
 
     <div class="col-md-3">

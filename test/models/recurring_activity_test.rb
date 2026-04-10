@@ -10,7 +10,7 @@ class RecurringActivityTest < ActiveSupport::TestCase
   test "valid recurring activity passes validation" do
     ra = RecurringActivity.new(
       user: @user,
-      topic: :study,
+      topic: "Studio",
       weekday: :monday,
       periodicity: :weekly,
       starts_at: Time.current.change(hour: 9, min: 0),
@@ -22,7 +22,7 @@ class RecurringActivityTest < ActiveSupport::TestCase
 
   test "requires starts_at" do
     ra = RecurringActivity.new(
-      user: @user, topic: :study, weekday: :monday, periodicity: :weekly,
+      user: @user, topic: "Studio", weekday: :monday, periodicity: :weekly,
       starts_at: nil, ends_at: Time.current.change(hour: 10, min: 0)
     )
     assert_not ra.valid?
@@ -31,7 +31,7 @@ class RecurringActivityTest < ActiveSupport::TestCase
 
   test "ends_at must be after starts_at" do
     ra = RecurringActivity.new(
-      user: @user, topic: :study, weekday: :monday, periodicity: :weekly,
+      user: @user, topic: "Studio", weekday: :monday, periodicity: :weekly,
       starts_at: Time.current.change(hour: 10, min: 0),
       ends_at: Time.current.change(hour: 9, min: 0)
     )
@@ -45,7 +45,7 @@ class RecurringActivityTest < ActiveSupport::TestCase
     before = CalendarEvent.count
     RecurringActivity.create!(
       user: @user,
-      topic: :study,
+      topic: "Studio",
       weekday: :monday,
       periodicity: :weekly,
       starts_at: Time.current.change(hour: 9, min: 0),
@@ -59,7 +59,7 @@ class RecurringActivityTest < ActiveSupport::TestCase
     assert_no_difference "CalendarEvent.count" do
       RecurringActivity.create!(
         user: @user,
-        topic: :study,
+        topic: "Studio",
         weekday: :monday,
         periodicity: :weekly,
         starts_at: Time.current.change(hour: 9, min: 0),
@@ -73,7 +73,7 @@ class RecurringActivityTest < ActiveSupport::TestCase
     today = Time.zone.today
     ra = RecurringActivity.create!(
       user: @user,
-      topic: :study,
+      topic: "Studio",
       weekday: :monday,
       periodicity: :monthly,
       starts_at: Time.current.change(hour: 9, min: 0),

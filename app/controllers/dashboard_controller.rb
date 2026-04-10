@@ -3,7 +3,7 @@ class DashboardController < ApplicationController
 
   def index
     @filters = filter_params
-    @customers = current_user.customers.includes(:appointments).order(:last_name, :first_name)
+    @customers = current_user.customers.includes(:appointments, :customer_objectives).order(:last_name, :first_name)
 
     if @filters[:full_name].present?
       @customers = @customers.by_full_name(@filters[:full_name])
@@ -35,6 +35,10 @@ class DashboardController < ApplicationController
         @customers = @customers.joins(:appointments).where(appointments: { starts_at: date.all_day }).distinct
       end
     end
+
+    objectives_scope = CustomerObjective.where(customer_id: @customers.select(:id))
+    @contracts_count = objectives_scope.count
+    @rfa_total = objectives_scope.sum(Arel.sql("COALESCE(invested_resources, 0) - COALESCE(diminished_resources, 0)"))
   end
 
   private

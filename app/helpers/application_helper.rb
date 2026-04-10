@@ -20,4 +20,12 @@ module ApplicationHelper
       [ label, key ]
     end
   end
+
+  def contact_call_badge_class(call_type)
+    {
+      "first_visit" => "bg-success",
+      "second_visit" => "bg-warning text-dark",
+      "assistance" => "bg-primary"
+    }.fetch(call_type.to_s, "bg-secondary")
+  end
 end

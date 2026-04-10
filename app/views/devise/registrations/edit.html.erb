@@ -68,6 +68,14 @@
                 <%= f.label :in_app_notifications, "Notifiche in-app", class: "form-check-label" %>
               </div>
             </div>
+
+            <div class="col-12">
+              <div class="alert alert-info mb-0">
+                <div class="fw-semibold">RFA previsto</div>
+                <div><%= number_to_currency(resource.rfa_expected) %></div>
+                <div class="small text-muted">Calcolato automaticamente dalle risorse investite e diminuite sugli obiettivi.</div>
+              </div>
+            </div>
           </div>
 
           <div class="d-grid mt-4">
