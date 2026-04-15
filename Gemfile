@@ -73,10 +73,11 @@ group :development do
   # Capistrano deploy
   gem "capistrano",                 "~> 3.17", require: false
   gem "capistrano-rails",           require: false
-  gem "capistrano-rbenv",           require: false
+  gem "capistrano-rvm",             require: false
   gem "capistrano3-puma",           require: false
   gem "capistrano-sidekiq",         require: false
   gem "capistrano-bundler",         require: false
+
 end
 
 group :test do

@@ -15,15 +15,10 @@ set :use_sudo,    false
 set :deploy_via,  :remote_cache
 set :ssh_options, { forward_agent: true, user: fetch(:user), keys: %w[~/.ssh/id_rsa.pub] }
 
+set :rvm_version, File.read(".ruby-version").strip
 # jemalloc
 set :default_env, { "LD_PRELOAD" => "/usr/lib/x86_64-linux-gnu/libjemalloc.so.2" }
 
-# Rbenv
-set :rbenv_type,     :user
-set :rbenv_ruby,     File.read(".ruby-version").strip
-set :rbenv_prefix,   "/usr/bin/rbenv exec"
-set :rbenv_map_bins, %w[rake gem bundle ruby rails sidekiq]
-set :rbenv_roles,    :all
 
 # Bundler
 set :bundle_flags, "--without development test"
@@ -81,18 +76,6 @@ namespace :deploy do
     end
 end
 
-
-namespace :bundler do
-  task :set_force_ruby_platform do
-    on roles(:app) do
-      within release_path do
-        execute :bundle, "config set force_ruby_platform true"
-      end
-    end
-  end
-end
-
-before "bundler:install", "bundler:set_force_ruby_platform"
 
 
 # Default branch is :master
