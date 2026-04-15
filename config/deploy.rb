@@ -15,7 +15,10 @@ set :use_sudo,    false
 set :deploy_via,  :remote_cache
 set :ssh_options, { forward_agent: true, user: fetch(:user), keys: %w[~/.ssh/id_rsa.pub] }
 
-set :rvm_version, File.read(".ruby-version").strip
+set :rvm_ruby_version, File.read(".ruby-version").strip
+set :nvm_type, :user
+set :nvm_node, File.read(".nvmrc").strip
+set :nvm_map_bins, %w[node npm yarn]
 # jemalloc
 set :default_env, { "LD_PRELOAD" => "/usr/lib/x86_64-linux-gnu/libjemalloc.so.2" }
 

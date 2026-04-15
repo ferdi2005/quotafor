@@ -11,7 +11,7 @@ Include un feed ICS per sincronizzare gli appuntamenti con Google Calendar / App
 - Ruby 3.2.2
 - Rails 8.1
 - PostgreSQL
-- Node.js + Yarn (per la pipeline CSS con Bootstrap)
+- Node.js 20 LTS + Yarn (per la pipeline CSS con Bootstrap)
 
 ## Setup sviluppo
 

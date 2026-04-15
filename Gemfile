@@ -77,7 +77,7 @@ group :development do
   gem "capistrano3-puma",           require: false
   gem "capistrano-sidekiq",         require: false
   gem "capistrano-bundler",         require: false
-
+  gem "capistrano-nvm", require: false
 end
 
 group :test do
