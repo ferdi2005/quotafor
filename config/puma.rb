@@ -7,7 +7,7 @@ threads_count = ENV.fetch("RAILS_MAX_THREADS", 5)
 threads threads_count, threads_count
 
 # Specifies the `port` that Puma will listen on
-if RAILS_ENV == "development"
+if ENV["RAILS_ENV"] == "development"
   port ENV.fetch("PUMA_PORT", 3000)
 end
 
@@ -33,5 +33,5 @@ plugin :tmp_restart
 
 # Bind to unix socket for Nginx (production)
 unless ENV["RAILS_ENV"] == "development"
-  bind ENV["PUMA_SOCKET"] || "unix:///home/deploy/apps/quotafor/shared/tmp/sockets/quotafor -puma.sock"
+  bind ENV["PUMA_SOCKET"] || "unix:///home/deploy/apps/quotafor/shared/tmp/sockets/quotafor-puma.sock"
 end
