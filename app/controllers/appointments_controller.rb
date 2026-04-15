@@ -76,10 +76,6 @@ class AppointmentsController < ApplicationController
     )
   end
 
-  def referral_customer_params
-    referral_customer_params_list.first || ActionController::Parameters.new
-  end
-
   def referral_customer_params_list
     appointment_params = params[:appointment]
     return [] unless appointment_params.present?
