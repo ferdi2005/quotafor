@@ -40,6 +40,14 @@
           <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
           <%= f.date_field :relationship_started_on, class: "form-control" %>
         </div>
+        <div class="col-12 col-md-6">
+          <%= f.label :phone, "Telefono", class: "form-label" %>
+          <%= f.telephone_field :phone, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-6">
+          <%= f.label :email, "Email", class: "form-label" %>
+          <%= f.email_field :email, class: "form-control" %>
+        </div>
         <div class="col-12 col-md-4">
           <%= f.label :customer_type, "Tipo cliente", class: "form-label" %>
           <%= f.select :customer_type,
@@ -68,6 +76,14 @@
           <%= f.label :passions, "Interessi / passioni", class: "form-label" %>
           <%= f.text_area :passions, class: "form-control", rows: 2 %>
         </div>
+                  <div class="col-md-6">
+                    <%= referral_form.label :phone, "Telefono", class: "form-label" %>
+                    <%= referral_form.telephone_field :phone, class: "form-control" %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= referral_form.label :email, "Email", class: "form-label" %>
+                    <%= referral_form.email_field :email, class: "form-control" %>
+                  </div>
         <div class="col-12">
           <%= f.label :personal_summary, "Sintesi colloquio", class: "form-label" %>
           <%= f.text_area :personal_summary, class: "form-control", rows: 3 %>
@@ -110,6 +126,14 @@
             <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
           </div>
         </div>
+                <div class="col-md-6">
+                  <%= referral_form.label :phone, "Telefono", class: "form-label" %>
+                  <%= referral_form.telephone_field :phone, class: "form-control" %>
+                </div>
+                <div class="col-md-6">
+                  <%= referral_form.label :email, "Email", class: "form-label" %>
+                  <%= referral_form.email_field :email, class: "form-control" %>
+                </div>
       <% end %>
     </div>
   </div>

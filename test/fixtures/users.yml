@@ -3,6 +3,7 @@ one:
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   first_name: Mario
   last_name: Rossi
+  admin: true
   time_zone: Europe/Rome
   calendar_feed_token: token-promoter-1
   email_notifications: true
@@ -13,6 +14,7 @@ two:
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
   first_name: Laura
   last_name: Bianchi
+  admin: false
   time_zone: Europe/Rome
   calendar_feed_token: token-promoter-2
   email_notifications: true

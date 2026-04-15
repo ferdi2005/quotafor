@@ -23,6 +23,9 @@ Rails.application.routes.draw do
     end
   end
   resources :recurring_activities
+  namespace :admin do
+    resources :users, only: %i[index new create]
+  end
   resources :calendar_events, only: [ :index ]
   get "calendar/feed/:token", to: "calendar_feeds#show", as: :calendar_feed, defaults: { format: :ics }
   post "calendar/regenerate_token", to: "calendar_feeds#regenerate_token", as: :calendar_regenerate_token

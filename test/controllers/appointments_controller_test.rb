@@ -35,6 +35,43 @@ class AppointmentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to customer_path(@customer)
   end
 
+  test "POST create crea più referral collegati al cliente" do
+    assert_difference "Appointment.count", 1 do
+      assert_difference "Customer.count", 2 do
+        post customer_appointments_url(@customer), params: {
+          appointment: {
+            starts_at: 2.days.from_now,
+            ends_at: 2.days.from_now + 1.hour,
+            appointment_type: "first_meeting",
+            status: "scheduled",
+            referral_customers: {
+              "0" => {
+                first_name: "Nuovo",
+                last_name: "Prospect",
+                profession: "Imprenditore",
+                phone: "3331112222",
+                email: "nuovo@example.com"
+              },
+              "1" => {
+                first_name: "Altro",
+                last_name: "Referral",
+                profession: "Consulente",
+                phone: "3334445555",
+                email: "altro@example.com"
+              }
+            }
+          }
+        }
+      end
+    end
+
+    referred_customers = Customer.where(referred_by_customer: @customer).order(:created_at)
+    assert_equal [ "Nuovo", "Altro" ], referred_customers.pluck(:first_name)
+    assert_equal [ @user.id, @user.id ], referred_customers.pluck(:user_id)
+    assert_equal [ "3331112222", "3334445555" ], referred_customers.pluck(:phone)
+    assert_equal [ "nuovo@example.com", "altro@example.com" ], referred_customers.pluck(:email)
+  end
+
   # ---- POST create con dati invalidi ----
 
   test "POST create con dati invalidi re-render form" do

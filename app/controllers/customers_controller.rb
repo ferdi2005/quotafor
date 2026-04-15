@@ -9,6 +9,7 @@ class CustomersController < ApplicationController
   def show
     @appointments = @customer.appointments.order(starts_at: :desc)
     @contact_calls = @customer.contact_calls.order(called_at: :desc)
+    @referred_customers = @customer.referred_customers.order(:last_name, :first_name)
   end
 
   def new
@@ -55,6 +56,8 @@ class CustomersController < ApplicationController
       :last_name,
       :birth_date,
       :profession,
+      :phone,
+      :email,
       :prospects,
       :satisfaction_level,
       :annual_income,

@@ -9,6 +9,18 @@
     </div>
   <% end %>
 
+  <% if @referral_customers.present? && @referral_customers.any? { |referral_customer| referral_customer.errors.any? } %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% @referral_customers.each do |referral_customer| %>
+          <% referral_customer.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <div class="row g-3">
     <%# Data e tipo %>
     <div class="col-md-6">
@@ -57,10 +69,6 @@
         <div class="col-12">
           <%= f.label :invested_resources, "Risorse investite", class: "form-label" %>
           <%= f.text_area :invested_resources, class: "form-control", rows: 2 %>
-        </div>
-        <div class="col-md-6">
-          <%= f.label :referrals, "Referral ricevuti", class: "form-label" %>
-          <%= f.text_area :referrals, class: "form-control", rows: 2 %>
         </div>
         <div class="col-md-6">
           <%= f.label :next_appointment_at, "Prossimo appuntamento", class: "form-label" %>
@@ -115,6 +123,108 @@
       <%= f.text_area :negative_reason, class: "form-control", rows: 2,
                       id: "appt_negative_reason" %>
     </div>
+
+    <div class="col-12">
+      <div class="card border-secondary-subtle bg-body-tertiary">
+        <div class="card-body">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <div>
+              <h2 class="h6 mb-1">Clienti referenziati</h2>
+              <p class="text-muted small mb-0">Aggiungi uno o più prospect collegati al cliente attuale.</p>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" data-add-referral>+ Aggiungi referral</button>
+          </div>
+
+          <div id="referral-customers-items">
+            <% @referral_customers.each_with_index do |referral_customer, index| %>
+              <%= f.fields_for :referral_customers, referral_customer, child_index: index do |referral_form| %>
+                <div class="row g-3 mb-3 p-3 border rounded bg-body" data-referral-item>
+                  <div class="col-12 d-flex justify-content-between align-items-center gap-2">
+                    <strong>Referral <%= index + 1 %></strong>
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-remove-referral>Rimuovi</button>
+                  </div>
+                  <div class="col-md-6">
+                    <%= referral_form.label :first_name, "Nome", class: "form-label" %>
+                    <%= referral_form.text_field :first_name, class: "form-control" %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= referral_form.label :last_name, "Cognome", class: "form-label" %>
+                    <%= referral_form.text_field :last_name, class: "form-control" %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= referral_form.label :birth_date, "Data di nascita", class: "form-label" %>
+                    <%= referral_form.date_field :birth_date, class: "form-control" %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= referral_form.label :profession, "Professione", class: "form-label" %>
+                    <%= referral_form.text_field :profession, class: "form-control" %>
+                  </div>
+                  <div class="col-12">
+                    <%= referral_form.label :personal_summary, "Note sul referral", class: "form-label" %>
+                    <%= referral_form.text_area :personal_summary, class: "form-control", rows: 2 %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= referral_form.label :phone, "Telefono", class: "form-label" %>
+                    <%= referral_form.telephone_field :phone, class: "form-control" %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= referral_form.label :email, "Email", class: "form-label" %>
+                    <%= referral_form.email_field :email, class: "form-control" %>
+                  </div>
+                  <div class="col-12">
+                    <%= referral_form.label :prospects, "Prospettive", class: "form-label" %>
+                    <%= referral_form.text_area :prospects, class: "form-control", rows: 2 %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+
+          <template id="referral-customer-template">
+            <%= f.fields_for :referral_customers, Customer.new(referred_by_customer: @customer, relationship_started_on: Date.current, customer_type: :new_customer, active: true), child_index: "NEW_RECORD" do |referral_form| %>
+              <div class="row g-3 mb-3 p-3 border rounded bg-body" data-referral-item>
+                <div class="col-12 d-flex justify-content-between align-items-center gap-2">
+                  <strong>Referral</strong>
+                  <button type="button" class="btn btn-outline-danger btn-sm" data-remove-referral>Rimuovi</button>
+                </div>
+                <div class="col-md-6">
+                  <%= referral_form.label :first_name, "Nome", class: "form-label" %>
+                  <%= referral_form.text_field :first_name, class: "form-control" %>
+                </div>
+                <div class="col-md-6">
+                  <%= referral_form.label :last_name, "Cognome", class: "form-label" %>
+                  <%= referral_form.text_field :last_name, class: "form-control" %>
+                </div>
+                <div class="col-md-6">
+                  <%= referral_form.label :birth_date, "Data di nascita", class: "form-label" %>
+                  <%= referral_form.date_field :birth_date, class: "form-control" %>
+                </div>
+                <div class="col-md-6">
+                  <%= referral_form.label :profession, "Professione", class: "form-label" %>
+                  <%= referral_form.text_field :profession, class: "form-control" %>
+                </div>
+                <div class="col-12">
+                  <%= referral_form.label :personal_summary, "Note sul referral", class: "form-label" %>
+                  <%= referral_form.text_area :personal_summary, class: "form-control", rows: 2 %>
+                </div>
+                <div class="col-md-6">
+                  <%= referral_form.label :phone, "Telefono", class: "form-label" %>
+                  <%= referral_form.telephone_field :phone, class: "form-control" %>
+                </div>
+                <div class="col-md-6">
+                  <%= referral_form.label :email, "Email", class: "form-label" %>
+                  <%= referral_form.email_field :email, class: "form-control" %>
+                </div>
+                <div class="col-12">
+                  <%= referral_form.label :prospects, "Prospettive", class: "form-label" %>
+                  <%= referral_form.text_area :prospects, class: "form-control", rows: 2 %>
+                </div>
+              </div>
+            <% end %>
+          </template>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="d-flex gap-2 mt-4">
@@ -131,6 +241,8 @@
   var secAssist     = document.getElementById('section-assistance');
   var secNegative   = document.getElementById('section-negative');
   var negTextarea   = document.getElementById('appt_negative_reason');
+  var referralItems = document.getElementById('referral-customers-items');
+  var referralTemplate = document.getElementById('referral-customer-template');
 
   function updateType() {
     var isAssist = typeSelect.value === 'assistance';
@@ -149,6 +261,24 @@
 
   typeSelect.addEventListener('change', updateType);
   outcomeSelect.addEventListener('change', updateOutcome);
+
+  document.addEventListener('click', function (event) {
+    var addButton = event.target.closest('[data-add-referral]');
+    if (addButton && referralItems && referralTemplate) {
+      var nextIndex = referralItems.querySelectorAll('[data-referral-item]').length;
+      var html = referralTemplate.innerHTML.split('NEW_RECORD').join(String(nextIndex));
+      referralItems.insertAdjacentHTML('beforeend', html);
+      return;
+    }
+
+    var removeButton = event.target.closest('[data-remove-referral]');
+    if (removeButton) {
+      var item = removeButton.closest('[data-referral-item]');
+      if (item && referralItems.querySelectorAll('[data-referral-item]').length > 1) {
+        item.remove();
+      }
+    }
+  });
 
   updateType();
 })();

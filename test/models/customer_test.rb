@@ -20,4 +20,25 @@ class CustomerTest < ActiveSupport::TestCase
     assert_equal BigDecimal("500"), customer.total_expenses
     assert_equal BigDecimal("1100"), customer.savings
   end
+
+  test "can store referred customers" do
+    promoter = Customer.create!(
+      user: users(:one),
+      first_name: "Promotore",
+      last_name: "Base",
+      relationship_started_on: Date.current,
+      customer_type: :existing_customer
+    )
+
+    referred = promoter.referred_customers.create!(
+      user: users(:one),
+      first_name: "Prospect",
+      last_name: "Referral",
+      relationship_started_on: Date.current,
+      customer_type: :new_customer
+    )
+
+    assert_equal promoter, referred.referred_by_customer
+    assert_includes promoter.referred_customers, referred
+  end
 end

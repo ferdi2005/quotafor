@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_183000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_15_213706) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -133,17 +133,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_183000) do
     t.date "birth_date"
     t.datetime "created_at", null: false
     t.integer "customer_type", default: 0, null: false
+    t.string "email"
     t.string "first_name", null: false
     t.string "last_name", null: false
     t.text "passions"
     t.text "personal_summary"
+    t.string "phone"
     t.string "profession"
     t.text "prospects"
+    t.bigint "referred_by_customer_id"
     t.date "relationship_started_on", null: false
     t.integer "satisfaction_level"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["profession"], name: "index_customers_on_profession"
+    t.index ["referred_by_customer_id"], name: "index_customers_on_referred_by_customer_id"
     t.index ["user_id", "last_name", "first_name"], name: "index_customers_on_user_id_and_last_name_and_first_name"
     t.index ["user_id"], name: "index_customers_on_user_id"
   end
@@ -207,6 +211,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_183000) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.boolean "admin", default: false, null: false
     t.string "calendar_feed_token", null: false
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -239,6 +244,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_183000) do
   add_foreign_key "contact_calls", "users"
   add_foreign_key "customer_expenses", "customers"
   add_foreign_key "customer_objectives", "customers"
+  add_foreign_key "customers", "customers", column: "referred_by_customer_id"
   add_foreign_key "customers", "users"
   add_foreign_key "in_app_notifications", "calendar_events"
   add_foreign_key "in_app_notifications", "users"

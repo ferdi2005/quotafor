@@ -17,6 +17,16 @@ class User < ApplicationRecord
 
   before_validation :ensure_calendar_feed_token
 
+  scope :ordered, -> { order(:last_name, :first_name, :email) }
+
+  def full_name
+    [ first_name, last_name ].compact_blank.join(" ").presence || email
+  end
+
+  def admin?
+    admin
+  end
+
   def regenerate_feed_token!
     update!(
       calendar_feed_token: SecureRandom.hex(24),

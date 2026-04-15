@@ -1,10 +1,12 @@
 class Customer < ApplicationRecord
   belongs_to :user
+  belongs_to :referred_by_customer, class_name: "Customer", optional: true, inverse_of: :referred_customers
 
   has_many :appointments, dependent: :destroy
   has_many :contact_calls, dependent: :destroy
   has_many :customer_objectives, dependent: :destroy
   has_many :calendar_events, dependent: :nullify
+  has_many :referred_customers, class_name: "Customer", foreign_key: :referred_by_customer_id, dependent: :nullify, inverse_of: :referred_by_customer
   has_many :spouses, dependent: :destroy
   has_many :children, dependent: :destroy
   has_many :customer_expenses, dependent: :destroy
@@ -44,7 +46,7 @@ class Customer < ApplicationRecord
   end
 
   def total_income
-    [annual_income, spouses.sum(:annual_income), children.sum(:annual_income)].compact.sum
+    [ annual_income, spouses.sum(:annual_income), children.sum(:annual_income) ].compact.sum
   end
 
   def total_expenses

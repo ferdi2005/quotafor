@@ -28,4 +28,10 @@ class ApplicationController < ActionController::Base
     zone = current_user&.time_zone.presence || "Europe/Rome"
     Time.use_zone(zone, &)
   end
+
+  def require_admin!
+    return if current_user&.admin?
+
+    redirect_to dashboard_path, alert: "Accesso riservato agli amministratori."
+  end
 end
