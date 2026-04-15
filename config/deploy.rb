@@ -18,7 +18,7 @@ set :ssh_options, { forward_agent: true, user: fetch(:user), keys: %w[~/.ssh/id_
 set :rvm_ruby_version, File.read(".ruby-version").strip
 set :nvm_type, :user
 set :nvm_node, File.read(".nvmrc").strip
-set :nvm_map_bins, %w[node npm yarn]
+set :nvm_map_bins, %w[node npm yarn bundle rake rails]
 # jemalloc
 set :default_env, { "LD_PRELOAD" => "/usr/lib/x86_64-linux-gnu/libjemalloc.so.2" }
 
