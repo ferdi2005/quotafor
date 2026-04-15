@@ -1,4 +1,8 @@
 <%= form_with model: [:admin, user], local: true do |f| %>
+  <% is_new_record = user.new_record? %>
+  <% title = is_new_record ? "Nuovo utente" : "Modifica utente" %>
+  <% submit_label = is_new_record ? "Crea utente" : "Salva modifiche" %>
+
   <% if user.errors.any? %>
     <div class="alert alert-danger mb-4">
       <ul class="mb-0">
@@ -11,7 +15,7 @@
 
   <div class="card shadow-sm">
     <div class="card-body">
-      <h1 class="h4 mb-3">Nuovo utente</h1>
+      <h1 class="h4 mb-3"><%= title %></h1>
       <div class="row g-3">
         <div class="col-12 col-md-6">
           <%= f.label :first_name, "Nome", class: "form-label" %>
@@ -31,17 +35,22 @@
         </div>
         <div class="col-12 col-md-6">
           <%= f.label :password, "Password", class: "form-label" %>
-          <%= f.password_field :password, class: "form-control", required: true %>
+          <%= f.password_field :password, class: "form-control", required: is_new_record %>
         </div>
         <div class="col-12 col-md-6">
           <%= f.label :password_confirmation, "Conferma password", class: "form-label" %>
-          <%= f.password_field :password_confirmation, class: "form-control", required: true %>
+          <%= f.password_field :password_confirmation, class: "form-control", required: is_new_record %>
         </div>
+        <% unless is_new_record %>
+          <div class="col-12">
+            <small class="text-muted">Lascia i campi password vuoti per mantenerla invariata.</small>
+          </div>
+        <% end %>
         <div class="col-12 col-md-6">
           <%= f.label :time_zone, "Fuso orario", class: "form-label" %>
           <%= f.time_zone_select :time_zone, nil, {}, { class: "form-select" } %>
         </div>
-        <div class="col-12 col-md-6 d-flex flex-column justify-content-end gap-2">
+        <div class="col-12 col-md-6 d-flex flex-column justify-content-end gap-2 pb-2">
           <div class="form-check">
             <%= f.check_box :admin, class: "form-check-input" %>
             <%= f.label :admin, "Amministratore", class: "form-check-label" %>
@@ -50,10 +59,6 @@
             <%= f.check_box :email_notifications, class: "form-check-input" %>
             <%= f.label :email_notifications, "Notifiche email", class: "form-check-label" %>
           </div>
-          <div class="form-check">
-            <%= f.check_box :in_app_notifications, class: "form-check-input" %>
-            <%= f.label :in_app_notifications, "Notifiche in-app", class: "form-check-label" %>
-          </div>
         </div>
       </div>
     </div>
@@ -61,6 +66,6 @@
 
   <div class="d-flex justify-content-end gap-2 mt-3">
     <%= link_to "Annulla", admin_users_path, class: "btn btn-outline-secondary" %>
-    <%= f.submit "Crea utente", class: "btn btn-primary" %>
+    <%= f.submit submit_label, class: "btn btn-primary" %>
   </div>
 <% end %>

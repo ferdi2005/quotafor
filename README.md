@@ -22,6 +22,29 @@ rails db:create db:migrate db:seed
 bin/dev          # avvia web server + watcher CSS (Procfile.dev)
 ```
 
+## Gestione utenti admin
+
+- Gli utenti con flag `admin` vedono la voce `Utenti` nella navbar.
+- Il pannello permette di visualizzare, creare, modificare ed eliminare utenti.
+- L'app protegge l'ultimo admin: non puo essere declassato o eliminato.
+- L'eliminazione e consentita solo per utenti senza dati operativi associati.
+
+### Creazione admin primario da CLI
+
+Task disponibile:
+
+```bash
+bin/rails admin_users:create_primary EMAIL=admin@example.com PASSWORD='password123' FIRST_NAME=Mario LAST_NAME=Rossi
+```
+
+Opzioni facoltative:
+- `TIME_ZONE` (default: `Europe/Rome`)
+- `PHONE`
+
+Note:
+- Il task crea l'admin solo se non esiste gia un utente admin.
+- Se manca `EMAIL` o `PASSWORD`, stampa l'uso corretto e termina con errore.
+
 `Procfile.dev` avvia:
 - `web` — Rails server con debug aperto (`RUBY_DEBUG_OPEN=true`)
 - `css` — `yarn watch:css` per compilazione Bootstrap in tempo reale
@@ -38,8 +61,8 @@ Crea un file `.env` nella root del progetto (ignorato da git):
 | `SMTP_USERNAME`  | Username SMTP                      | `user@example.com`       |
 | `SMTP_PASSWORD`  | Password SMTP                      | `secret`                 |
 | `SECRET_KEY_BASE`| Chiave segreta Rails               | *(output di `rails secret`)* |
-| `SOLID_QUEUE_IN_PUMA` | Avvia solid_queue inline in Puma | `true`              |
 | `SENTRY_DSN`     | DSN Sentry per error tracking      | `https://...@sentry.io/` |
+| `REDIS_URL`      | URL REDIS                          |                          |
 
 ## Feed ICS (Calendario)
 
@@ -53,26 +76,12 @@ Per aggiungere il feed a un calendario esterno:
 
 ## Worker / Job Queue
 
-I reminder email e le notifiche in-app vengono inviati tramite ActiveJob con **solid_queue** (default Rails 8.1).
+I reminder email e le notifiche in-app vengono inviati tramite ActiveJob con **Sidekiq**
 
 | Job | Descrizione |
 |-----|-------------|
 | `AppointmentDayBeforeReminderJob` | Invia reminder per un singolo appuntamento (con token antiduplicato) |
 | `DayBeforeAppointmentReminderJob` | Scansiona tutti gli appuntamenti di domani e invia reminder |
-
-### Avvio worker in produzione
-
-**Opzione A — inline in Puma** (semplice, server singolo):
-```bash
-SOLID_QUEUE_IN_PUMA=true bundle exec puma
-```
-
-**Opzione B — processo separato** (raccomandato):
-```bash
-bundle exec rake solid_queue:start
-```
-
-> ⚠️ Non usare l'adapter `:async` in produzione: non persiste i job tra i restart del server.
 
 ## Notifiche
 
@@ -91,6 +100,8 @@ kamal setup
 # Deploy successivi
 kamal deploy
 ```
+
+Capistrano
 
 ### Health check
 `GET /up` — restituisce 200 se l'app è avviata correttamente (usabile da load balancer / uptime monitor).

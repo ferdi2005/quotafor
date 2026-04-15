@@ -62,7 +62,7 @@
           </div>
         </div>
         <div class="col-12 col-md-6">
-          <%= f.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
+          <%= f.label :satisfaction_level, "Livello soddisfazione lavoro", class: "form-label" %>
           <%= f.select :satisfaction_level,
                        options_for_select((1..10).to_a, customer.satisfaction_level),
                        { include_blank: "Seleziona..." },
@@ -76,14 +76,6 @@
           <%= f.label :passions, "Interessi / passioni", class: "form-label" %>
           <%= f.text_area :passions, class: "form-control", rows: 2 %>
         </div>
-                  <div class="col-md-6">
-                    <%= referral_form.label :phone, "Telefono", class: "form-label" %>
-                    <%= referral_form.telephone_field :phone, class: "form-control" %>
-                  </div>
-                  <div class="col-md-6">
-                    <%= referral_form.label :email, "Email", class: "form-label" %>
-                    <%= referral_form.email_field :email, class: "form-control" %>
-                  </div>
         <div class="col-12">
           <%= f.label :personal_summary, "Sintesi colloquio", class: "form-label" %>
           <%= f.text_area :personal_summary, class: "form-control", rows: 3 %>
@@ -118,6 +110,13 @@
             <%= spouse_form.label :annual_income, "Reddito annuo", class: "form-label" %>
             <%= spouse_form.number_field :annual_income, step: :any, class: "form-control" %>
           </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= spouse_form.label :satisfaction_level, "Livello soddisfazione lavoro", class: "form-label" %>
+              <%= spouse_form.select :satisfaction_level,
+                                     options_for_select((1..10).to_a, spouse_form.object.satisfaction_level),
+                                     { include_blank: "Seleziona..." },
+                                     class: "form-select" %>
+            </div>
           <div class="col-12">
             <%= spouse_form.label :prospects, "Prospettive", class: "form-label" %>
             <%= spouse_form.text_area :prospects, class: "form-control", rows: 2 %>
@@ -126,14 +125,6 @@
             <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
           </div>
         </div>
-                <div class="col-md-6">
-                  <%= referral_form.label :phone, "Telefono", class: "form-label" %>
-                  <%= referral_form.telephone_field :phone, class: "form-control" %>
-                </div>
-                <div class="col-md-6">
-                  <%= referral_form.label :email, "Email", class: "form-label" %>
-                  <%= referral_form.email_field :email, class: "form-control" %>
-                </div>
       <% end %>
     </div>
   </div>
@@ -306,6 +297,10 @@
               <%= bank_form.label :bank_name, "Banca", class: "form-label" %>
               <%= bank_form.text_field :bank_name, class: "form-control" %>
             </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= bank_form.label :current_account_balance, "Saldo c/c", class: "form-label" %>
+              <%= bank_form.number_field :current_account_balance, step: :any, class: "form-control" %>
+            </div>
             <div class="col-12 col-md-4 col-lg-2">
               <%= bank_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
               <%= bank_form.select :satisfaction_level,
@@ -384,6 +379,82 @@
         <div class="col-12 col-md-4 col-lg-2">
           <%= bank_form.label :deadlines, "Scadenze", class: "form-label" %>
           <%= bank_form.text_field :deadlines, class: "form-control" %>
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+        </div>
+      </div>
+    <% end %>
+  </template>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Investimenti</h2>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-add-nested="investments">Aggiungi investimento</button>
+      </div>
+      <div id="investments-items">
+        <%= f.fields_for :investments do |investment_form| %>
+          <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+            <%= investment_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= investment_form.label :investment_type, "Tipo", class: "form-label" %>
+              <%= investment_form.text_field :investment_type, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= investment_form.label :bank_name, "Banca", class: "form-label" %>
+              <%= investment_form.text_field :bank_name, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= investment_form.label :deadlines, "Scadenze", class: "form-label" %>
+              <%= investment_form.text_field :deadlines, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= investment_form.label :amount, "€", class: "form-label" %>
+              <%= investment_form.number_field :amount, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= investment_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
+              <%= investment_form.select :satisfaction_level,
+                                         options_for_select((1..10).to_a, investment_form.object.satisfaction_level),
+                                         { include_blank: "Seleziona..." },
+                                         class: "form-select" %>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <template id="investments-template">
+    <%= f.fields_for :investments, Investment.new, child_index: "NEW_RECORD" do |investment_form| %>
+      <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+        <%= investment_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+        <div class="col-12 col-md-6 col-lg-3">
+          <%= investment_form.label :investment_type, "Tipo", class: "form-label" %>
+          <%= investment_form.text_field :investment_type, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <%= investment_form.label :bank_name, "Banca", class: "form-label" %>
+          <%= investment_form.text_field :bank_name, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= investment_form.label :deadlines, "Scadenze", class: "form-label" %>
+          <%= investment_form.text_field :deadlines, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= investment_form.label :amount, "€", class: "form-label" %>
+          <%= investment_form.number_field :amount, step: :any, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= investment_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
+          <%= investment_form.select :satisfaction_level,
+                                     options_for_select((1..10).to_a, investment_form.object.satisfaction_level),
+                                     { include_blank: "Seleziona..." },
+                                     class: "form-select" %>
         </div>
         <div class="col-12 d-flex justify-content-end">
           <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>

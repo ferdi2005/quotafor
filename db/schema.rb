@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_15_213706) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_15_233100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -48,6 +48,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_213706) do
   create_table "banks", force: :cascade do |t|
     t.decimal "amount"
     t.string "bank_name"
+    t.decimal "current_account_balance"
     t.bigint "customer_id", null: false
     t.text "deadlines"
     t.text "reason"
@@ -136,6 +137,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_213706) do
     t.string "email"
     t.string "first_name", null: false
     t.string "last_name", null: false
+    t.boolean "ok_current_account", default: false, null: false
     t.text "passions"
     t.text "personal_summary"
     t.string "phone"
@@ -176,6 +178,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_213706) do
     t.index ["customer_id"], name: "index_insurances_on_customer_id"
   end
 
+  create_table "investments", force: :cascade do |t|
+    t.decimal "amount"
+    t.string "bank_name"
+    t.bigint "customer_id", null: false
+    t.text "deadlines"
+    t.string "investment_type"
+    t.integer "satisfaction_level"
+    t.index ["customer_id"], name: "index_investments_on_customer_id"
+  end
+
   create_table "properties", force: :cascade do |t|
     t.text "address"
     t.bigint "customer_id", null: false
@@ -207,6 +219,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_213706) do
     t.string "last_name"
     t.string "profession"
     t.text "prospects"
+    t.integer "satisfaction_level"
     t.index ["customer_id"], name: "index_spouses_on_customer_id"
   end
 
@@ -249,6 +262,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_213706) do
   add_foreign_key "in_app_notifications", "calendar_events"
   add_foreign_key "in_app_notifications", "users"
   add_foreign_key "insurances", "customers"
+  add_foreign_key "investments", "customers"
   add_foreign_key "properties", "customers"
   add_foreign_key "recurring_activities", "users"
   add_foreign_key "spouses", "customers"

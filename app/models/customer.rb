@@ -13,6 +13,7 @@ class Customer < ApplicationRecord
   has_many :banks, dependent: :destroy
   has_many :insurances, dependent: :destroy
   has_many :properties, dependent: :destroy
+  has_many :investments, dependent: :destroy
 
   accepts_nested_attributes_for :spouses, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :children, allow_destroy: true, reject_if: :all_blank
@@ -20,6 +21,7 @@ class Customer < ApplicationRecord
   accepts_nested_attributes_for :banks, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :insurances, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :properties, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :investments, allow_destroy: true, reject_if: :all_blank
 
   enum :customer_type, { new_customer: 0, existing_customer: 1, previous_customer: 2 }
 

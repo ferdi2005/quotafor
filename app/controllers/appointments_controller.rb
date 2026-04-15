@@ -4,7 +4,11 @@ class AppointmentsController < ApplicationController
   before_action :set_appointment, only: %i[edit update destroy]
 
   def new
-    @appointment = @customer.appointments.new(user: current_user, starts_at: Time.current.change(min: 0))
+    @appointment = @customer.appointments.new(
+      user: current_user,
+      starts_at: Time.current.change(min: 0),
+      ok_current_account: @customer.ok_current_account
+    )
     prepare_referral_customers
   end
 
@@ -59,6 +63,7 @@ class AppointmentsController < ApplicationController
       :negative_reason,
       :visit_feedback,
       :invested_resources,
+      :presentation_notes,
       :referrals,
       :next_appointment_at,
       :next_appointment_callback,
@@ -76,23 +81,17 @@ class AppointmentsController < ApplicationController
   end
 
   def referral_customer_params_list
-    raw_params = params.dig(:appointment, :referral_customers)
-    return [] if raw_params.blank?
+    appointment_params = params[:appointment]
+    return [] unless appointment_params.present?
 
-    entries = case raw_params
-    when ActionController::Parameters
-      raw_params.to_unsafe_h.values
-    when Array
-      raw_params
-    when Hash
-      raw_params.values
+    permitted_appointment = if appointment_params.is_a?(ActionController::Parameters)
+      appointment_params
     else
-      []
+      ActionController::Parameters.new(appointment_params)
     end
 
-    entries.filter_map do |entry|
-      attributes = entry.respond_to?(:to_h) ? entry.to_h : {}
-      permitted = ActionController::Parameters.new(attributes).permit(
+    referral_entries = permitted_appointment.permit(
+      referral_customers: [
         :first_name,
         :last_name,
         :birth_date,
@@ -102,7 +101,10 @@ class AppointmentsController < ApplicationController
         :personal_summary,
         :prospects,
         :satisfaction_level
-      )
+      ]
+    ).fetch(:referral_customers, {})
+
+    referral_entries.values.filter_map do |permitted|
       next if permitted.values.all?(&:blank?)
 
       permitted
@@ -144,6 +146,7 @@ class AppointmentsController < ApplicationController
 
     Appointment.transaction do
       @appointment.save!
+      @customer.update_column(:ok_current_account, @appointment.ok_current_account)
       @referral_customers_to_save.each(&:save!)
     end
 

@@ -66,12 +66,13 @@ class CustomersController < ApplicationController
       :customer_type,
       :personal_summary,
       :active,
-      spouses_attributes: %i[id first_name last_name birth_date profession prospects annual_income _destroy],
+      spouses_attributes: %i[id first_name last_name birth_date profession prospects annual_income satisfaction_level _destroy],
       children_attributes: %i[id first_name last_name birth_date profession desires solutions annual_income _destroy],
       customer_expenses_attributes: %i[id expense_type amount description category _destroy],
-      banks_attributes: %i[id bank_name reason use satisfaction_level what_has deadlines amount rendimento _destroy],
+      banks_attributes: %i[id bank_name reason use satisfaction_level what_has deadlines amount rendimento current_account_balance _destroy],
       insurances_attributes: %i[id reason objective amount satisfaction_level rendimento _destroy],
-      properties_attributes: %i[id purpose address _destroy]
+      properties_attributes: %i[id purpose address _destroy],
+      investments_attributes: %i[id investment_type bank_name deadlines amount satisfaction_level _destroy]
     )
   end
 
@@ -82,5 +83,6 @@ class CustomersController < ApplicationController
     @customer.banks.build unless @customer.banks.any?
     @customer.insurances.build unless @customer.insurances.any?
     @customer.properties.build unless @customer.properties.any?
+    @customer.investments.build unless @customer.investments.any?
   end
 end

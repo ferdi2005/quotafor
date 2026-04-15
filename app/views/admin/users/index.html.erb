@@ -28,6 +28,7 @@
                 <th>Fuso</th>
                 <th>Ruolo</th>
                 <th>Creato il</th>
+                <th class="text-end">Azioni</th>
               </tr>
             </thead>
             <tbody>
@@ -46,11 +47,17 @@
                       <% end %>
                     </td>
                     <td><%= l(user.created_at, format: :short) %></td>
+                    <td class="text-end">
+                      <div class="d-inline-flex gap-2">
+                        <%= link_to "Modifica", edit_admin_user_path(user), class: "btn btn-outline-primary btn-sm" %>
+                        <%= button_to "Elimina", admin_user_path(user), method: :delete, form: { data: { turbo_confirm: "Confermi eliminazione utente?" } }, class: "btn btn-outline-danger btn-sm" %>
+                      </div>
+                    </td>
                   </tr>
                 <% end %>
               <% else %>
                 <tr>
-                  <td colspan="6" class="text-center text-muted py-4">Nessun utente presente.</td>
+                  <td colspan="7" class="text-center text-muted py-4">Nessun utente presente.</td>
                 </tr>
               <% end %>
             </tbody>
