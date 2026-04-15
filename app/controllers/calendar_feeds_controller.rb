@@ -9,7 +9,8 @@ class CalendarFeedsController < ApplicationController
     events = user.calendar_events.order(:starts_at)
     response.headers["Content-Disposition"] = %(inline; filename="quotafor-calendar.ics")
 
-    render plain: to_ics(user, events), content_type: "text/calendar"
+    render plain: to_ics(user, events), content_type: "text/calendar; charset=utf-8"
+    response.headers["Content-Type"] = "text/calendar; charset=utf-8; method=PUBLISH"
   end
 
   def regenerate_token
