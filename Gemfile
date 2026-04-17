@@ -47,7 +47,7 @@ gem "cssbundling-rails"
 gem "bootstrap_form"
 gem "sentry-ruby"
 gem "sentry-rails"
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 
 # Load environment variables from .env file
 gem "dotenv-rails"
