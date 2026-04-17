@@ -22,11 +22,15 @@ class CalendarFeedsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, @user.email
     assert_includes response.body, "METHOD:PUBLISH"
     assert_includes response.body, "NAME:QuotaFor - #{@user.email}"
+    assert_includes response.body, "X-WR-CALNAME:QuotaFor - #{@user.email}"
+    assert_includes response.body, "X-WR-TIMEZONE:Europe/Rome"
     assert_includes response.body, "REFRESH-INTERVAL;VALUE=DURATION:P1D"
     assert_includes response.body, "X-PUBLISHED-TTL:P1D"
     assert_match(/UID:calendar-event-\d+@www\.example\.com/, response.body)
     assert_includes response.body, "STATUS:CONFIRMED"
     assert_includes response.body, "BEGIN:VTIMEZONE"
+    assert_includes response.body, "TZID:Europe/Rome"
+    assert_match(/DTSTART;TZID=Europe\/Rome:/, response.body)
   end
 
   test "GET feed includes at least one RFC 5545 calendar component" do

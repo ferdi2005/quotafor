@@ -1,3 +1,6 @@
+require "icalendar"
+require "icalendar/tzinfo"
+
 class CalendarFeedsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :show
   before_action :authenticate_user!, only: :regenerate_token
@@ -7,9 +10,10 @@ class CalendarFeedsController < ApplicationController
     return head :not_found unless user
 
     events = user.calendar_events.order(:starts_at)
+    calendar = build_calendar(user, events)
     response.headers["Content-Disposition"] = %(inline; filename="quotafor-calendar.ics")
 
-    render plain: to_ics(user, events), content_type: "text/calendar; charset=utf-8"
+    render body: calendar.to_ical, content_type: "text/calendar; charset=utf-8"
     response.headers["Content-Type"] = "text/calendar; charset=utf-8; method=PUBLISH"
   end
 
@@ -20,89 +24,61 @@ class CalendarFeedsController < ApplicationController
 
   private
 
-  def to_ics(user, events)
-    lines = []
-    lines << "BEGIN:VCALENDAR"
-    lines << "VERSION:2.0"
-    lines << "PRODID:-//QuotaFor//CRM Calendar//IT"
-    lines << "METHOD:PUBLISH"
-    lines << "CALSCALE:GREGORIAN"
-    lines << "X-WR-TIMEZONE:Europe/Rome"
-    lines << "X-WR-CALNAME:QuotaFor - #{escape_ics(user.email)}"
-    lines << "NAME:QuotaFor - #{escape_ics(user.email)}"
-    lines << "REFRESH-INTERVAL;VALUE=DURATION:P1D"
-    lines << "X-PUBLISHED-TTL:P1D"
+  def build_calendar(user, events)
+    zone_name = calendar_time_zone_name(user)
+    calendar = Icalendar::Calendar.new
+    calendar.prodid = "-//QuotaFor//CRM Calendar//IT"
+    calendar.version = "2.0"
+    calendar.calscale = "GREGORIAN"
+    calendar.publish
+    calendar.ip_name = "QuotaFor - #{user.email}"
+    calendar.x_wr_calname = "QuotaFor - #{user.email}"
+    calendar.x_wr_timezone = zone_name
+    calendar.refresh_interval = "P1D"
+    calendar.x_published_ttl = "P1D"
 
-    lines.concat(vtimezone_component)
+    add_timezone_component(calendar, zone_name, events)
 
     events.each do |event|
-      lines << "BEGIN:VEVENT"
-      lines << "UID:calendar-event-#{event.id}@#{calendar_uid_host}"
-      lines << "DTSTAMP:#{event.updated_at.utc.strftime('%Y%m%dT%H%M%SZ')}"
-      lines << "DTSTART:#{event.starts_at.utc.strftime('%Y%m%dT%H%M%SZ')}"
-      if event.ends_at.present?
-        lines << "DTEND:#{event.ends_at.utc.strftime('%Y%m%dT%H%M%SZ')}"
-      else
-        lines << "DURATION:PT1H"
-      end
-      lines << "STATUS:CONFIRMED"
-      lines << "SUMMARY:#{escape_ics(event.title)}"
-      lines << "DESCRIPTION:#{escape_ics(event.description.to_s)}"
-      lines << "END:VEVENT"
+      calendar.add_event build_event(event, zone_name)
     end
 
-    lines << "END:VCALENDAR"
-    lines.flat_map { |l| fold_line(l) }.join("\r\n") + "\r\n"
+    calendar
   end
 
-  def vtimezone_component
-    [
-      "BEGIN:VTIMEZONE",
-      "TZID:Europe/Rome",
-      "X-LIC-LOCATION:Europe/Rome",
-      "BEGIN:DAYLIGHT",
-      "TZOFFSETFROM:+0100",
-      "TZOFFSETTO:+0200",
-      "TZNAME:CEST",
-      "DTSTART:19700329T020000",
-      "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU",
-      "END:DAYLIGHT",
-      "BEGIN:STANDARD",
-      "TZOFFSETFROM:+0200",
-      "TZOFFSETTO:+0100",
-      "TZNAME:CET",
-      "DTSTART:19701025T030000",
-      "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU",
-      "END:STANDARD",
-      "END:VTIMEZONE"
-    ]
-  end
+  def build_event(event, zone_name)
+    Icalendar::Event.new.tap do |ical_event|
+      ical_event.uid = "calendar-event-#{event.id}@#{calendar_uid_host}"
+      ical_event.dtstamp = Icalendar::Values::DateTime.new(event.updated_at.utc, "tzid" => "UTC")
 
-  # RFC 5545 §3.1: fold lines longer than 75 octets
-  def fold_line(line)
-    return [ line ] if line.bytesize <= 75
+      start_time = event.starts_at.in_time_zone(zone_name)
+      ical_event.dtstart = Icalendar::Values::DateTime.new(start_time, "tzid" => zone_name)
 
-    result = []
-    buf = +""
-    line.each_char do |ch|
-      if (buf + ch).bytesize > 75
-        result << buf
-        buf = " " + ch
+      if event.ends_at.present? && event.ends_at > event.starts_at
+        end_time = event.ends_at.in_time_zone(zone_name)
+        ical_event.dtend = Icalendar::Values::DateTime.new(end_time, "tzid" => zone_name)
       else
-        buf << ch
+        ical_event.duration = "PT1H"
       end
+
+      ical_event.status = "CONFIRMED"
+      ical_event.summary = event.title
+      ical_event.description = event.description.to_s
     end
-    result << buf unless buf.empty?
-    result
   end
 
-  def escape_ics(text)
-    text.to_s
-        .gsub("\\", "\\\\")
-        .gsub(";", "\\;")
-        .gsub(",", "\\,")
-        .gsub("\r\n", "\\n")
-        .gsub("\n", "\\n")
+  def add_timezone_component(calendar, zone_name, events)
+    reference_time = events.first&.starts_at || Time.current
+    timezone = TZInfo::Timezone.get(zone_name).ical_timezone(reference_time)
+    calendar.add_timezone timezone
+  rescue TZInfo::InvalidTimezoneIdentifier
+    fallback_zone = "Europe/Rome"
+    calendar.x_wr_timezone = fallback_zone
+    calendar.add_timezone TZInfo::Timezone.get(fallback_zone).ical_timezone(reference_time)
+  end
+
+  def calendar_time_zone_name(user)
+    user.time_zone.presence || "Europe/Rome"
   end
 
   def calendar_uid_host

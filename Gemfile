@@ -45,6 +45,7 @@ gem "jquery-rails"
 gem "cssbundling-rails"
 
 gem "bootstrap_form"
+gem "icalendar", "~> 2.10"
 gem "sentry-ruby"
 gem "sentry-rails"
 gem "devise", "~> 4.9"
