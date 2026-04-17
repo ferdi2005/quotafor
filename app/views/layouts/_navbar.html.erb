@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light border rounded mt-2 mb-3">
 	<div class="container-fluid">
-		<%= link_to "QuotaFor", authenticated_root_path, class: "navbar-brand fw-semibold" %>
+		<%= link_to "QuotaFormazione CRM", authenticated_root_path, class: "navbar-brand fw-semibold" %>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -15,7 +15,7 @@
 						<%= link_to "Calendario", calendar_events_path, class: "nav-link" %>
 					</li>
 					<li class="nav-item">
-						<%= link_to "Attività ricorrenti", recurring_activities_path, class: "nav-link" %>
+						<%= link_to "Attività", recurring_activities_path, class: "nav-link" %>
 					</li>
 					<% if current_user.admin? %>
 						<li class="nav-item">

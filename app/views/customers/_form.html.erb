@@ -11,11 +11,8 @@
 
   <div class="card shadow-sm mb-4">
     <div class="card-body">
-      <h1 class="h4 mb-3">Nuovo cliente</h1>
+      <h1 class="h4 mb-3">Dati personali</h1>
       <div class="row g-3">
-        <div class="col-12">
-          <h2 class="h6 text-uppercase text-muted mb-0">Dati personali</h2>
-        </div>
         <div class="col-12 col-md-6">
           <%= f.label :first_name, "Nome", class: "form-label" %>
           <%= f.text_field :first_name, class: "form-control" %>
@@ -26,7 +23,7 @@
         </div>
         <div class="col-12 col-md-4">
           <%= f.label :birth_date, "Data di nascita", class: "form-label" %>
-          <%= f.date_field :birth_date, class: "form-control" %>
+          <%= f.text_field :birth_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
         </div>
         <div class="col-12 col-md-4">
           <%= f.label :profession, "Professione", class: "form-label" %>
@@ -38,7 +35,32 @@
         </div>
         <div class="col-12 col-md-4">
           <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
-          <%= f.date_field :relationship_started_on, class: "form-control" %>
+          <%= f.text_field :relationship_started_on, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+        </div>
+        <div class="col-12 col-md-8">
+          <%= f.label :referred_by_customer_id, "Referenziato da", class: "form-label" %>
+          <%= f.select :referred_by_customer_id,
+                       options_for_select(
+                         @selected_referrer.present? ? [[ [@selected_referrer.full_name, @selected_referrer.phone.presence, @selected_referrer.email.presence].compact.join(" - "), @selected_referrer.id ]] : [],
+                         customer.referred_by_customer_id
+                       ),
+                       { include_blank: "Cerca cliente referente..." },
+                       class: "form-select",
+                       data: {
+                         referrer_select: true,
+                         referrer_url: referrer_suggestions_customers_path,
+                         exclude_customer_id: customer.persisted? ? customer.id : nil,
+                         placeholder: "Cerca per nome, telefono o email"
+                       } %>
+          <div class="form-text">Cerca il cliente referente per nome, telefono o email.</div>
+          <div class="mt-2" data-referrer-badge-container>
+            <% if @selected_referrer.present? %>
+              <span class="badge bg-info-subtle text-dark border">
+                Referente selezionato:
+                <%= link_to @selected_referrer.full_name, customer_path(@selected_referrer), class: "text-decoration-none" %>
+              </span>
+            <% end %>
+          </div>
         </div>
         <div class="col-12 col-md-6">
           <%= f.label :phone, "Telefono", class: "form-label" %>
@@ -100,7 +122,7 @@
           </div>
           <div class="col-12 col-md-4 col-lg-2">
             <%= spouse_form.label :birth_date, "Data di nascita", class: "form-label" %>
-            <%= spouse_form.date_field :birth_date, class: "form-control" %>
+            <%= spouse_form.text_field :birth_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
           </div>
           <div class="col-12 col-md-4 col-lg-2">
             <%= spouse_form.label :profession, "Professione", class: "form-label" %>
@@ -149,7 +171,7 @@
             </div>
             <div class="col-12 col-md-4 col-lg-2">
               <%= child_form.label :birth_date, "Data di nascita", class: "form-label" %>
-              <%= child_form.date_field :birth_date, class: "form-control" %>
+              <%= child_form.text_field :birth_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
             </div>
             <div class="col-12 col-md-4 col-lg-2">
               <%= child_form.label :profession, "Professione", class: "form-label" %>
@@ -190,7 +212,7 @@
         </div>
         <div class="col-12 col-md-4 col-lg-2">
           <%= child_form.label :birth_date, "Data di nascita", class: "form-label" %>
-          <%= child_form.date_field :birth_date, class: "form-control" %>
+          <%= child_form.text_field :birth_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
           <%= child_form.label :profession, "Professione", class: "form-label" %>
@@ -298,6 +320,10 @@
               <%= bank_form.text_field :bank_name, class: "form-control" %>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
+              <%= bank_form.label :referente, "Referente", class: "form-label" %>
+              <%= bank_form.text_field :referente, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
               <%= bank_form.label :current_account_balance, "Saldo c/c", class: "form-label" %>
               <%= bank_form.number_field :current_account_balance, step: :any, class: "form-control" %>
             </div>
@@ -315,18 +341,6 @@
             <div class="col-12 col-md-6 col-lg-3">
               <%= bank_form.label :use, "Uso", class: "form-label" %>
               <%= bank_form.text_area :use, class: "form-control", rows: 1 %>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-              <%= bank_form.label :what_has, "Patrimonio disponibile", class: "form-label" %>
-              <%= bank_form.text_area :what_has, class: "form-control", rows: 1 %>
-            </div>
-            <div class="col-12 col-md-4 col-lg-2">
-              <%= bank_form.label :amount, "Importo", class: "form-label" %>
-              <%= bank_form.number_field :amount, step: :any, class: "form-control" %>
-            </div>
-            <div class="col-12 col-md-4 col-lg-2">
-              <%= bank_form.label :rendimento, "Rendimento", class: "form-label" %>
-              <%= bank_form.number_field :rendimento, step: :any, class: "form-control" %>
             </div>
             <div class="col-12 col-md-4 col-lg-2">
               <%= bank_form.label :deadlines, "Scadenze", class: "form-label" %>
@@ -349,6 +363,10 @@
           <%= bank_form.label :bank_name, "Banca", class: "form-label" %>
           <%= bank_form.text_field :bank_name, class: "form-control" %>
         </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <%= bank_form.label :referente, "Referente", class: "form-label" %>
+          <%= bank_form.text_field :referente, class: "form-control" %>
+        </div>
         <div class="col-12 col-md-4 col-lg-2">
           <%= bank_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
           <%= bank_form.select :satisfaction_level,
@@ -363,18 +381,6 @@
         <div class="col-12 col-md-6 col-lg-3">
           <%= bank_form.label :use, "Uso", class: "form-label" %>
           <%= bank_form.text_area :use, class: "form-control", rows: 1 %>
-        </div>
-        <div class="col-12 col-md-6 col-lg-4">
-          <%= bank_form.label :what_has, "Patrimonio disponibile", class: "form-label" %>
-          <%= bank_form.text_area :what_has, class: "form-control", rows: 1 %>
-        </div>
-        <div class="col-12 col-md-4 col-lg-2">
-          <%= bank_form.label :amount, "Importo", class: "form-label" %>
-          <%= bank_form.number_field :amount, step: :any, class: "form-control" %>
-        </div>
-        <div class="col-12 col-md-4 col-lg-2">
-          <%= bank_form.label :rendimento, "Rendimento", class: "form-label" %>
-          <%= bank_form.number_field :rendimento, step: :any, class: "form-control" %>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
           <%= bank_form.label :deadlines, "Scadenze", class: "form-label" %>
@@ -398,16 +404,27 @@
           <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
             <%= investment_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
             <div class="col-12 col-md-6 col-lg-3">
-              <%= investment_form.label :investment_type, "Tipo", class: "form-label" %>
-              <%= investment_form.text_field :investment_type, class: "form-control" %>
+              <%= investment_form.label :product_name, "Nome prodotto", class: "form-label" %>
+              <%= investment_form.text_field :product_name, class: "form-control" %>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
-              <%= investment_form.label :bank_name, "Banca", class: "form-label" %>
-              <%= investment_form.text_field :bank_name, class: "form-control" %>
+              <%= investment_form.label :distributed_by, "Distribuito da", class: "form-label" %>
+              <%= investment_form.text_field :distributed_by, class: "form-control" %>
             </div>
             <div class="col-12 col-md-4 col-lg-2">
-              <%= investment_form.label :deadlines, "Scadenze", class: "form-label" %>
-              <%= investment_form.text_field :deadlines, class: "form-control" %>
+              <%= investment_form.label :subscription_date, "Data sottoscrizione", class: "form-label" %>
+              <%= investment_form.text_field :subscription_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= investment_form.label :purpose, "Finalità", class: "form-label" %>
+              <%= investment_form.select :purpose,
+                                         options_for_select(enum_options(Investment, :purpose), investment_form.object.purpose),
+                                         { include_blank: "Seleziona..." },
+                                         class: "form-select" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= investment_form.label :advised_by, "Chi lo ha consigliato", class: "form-label" %>
+              <%= investment_form.text_field :advised_by, class: "form-control" %>
             </div>
             <div class="col-12 col-md-4 col-lg-2">
               <%= investment_form.label :amount, "€", class: "form-label" %>
@@ -434,16 +451,27 @@
       <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
         <%= investment_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
         <div class="col-12 col-md-6 col-lg-3">
-          <%= investment_form.label :investment_type, "Tipo", class: "form-label" %>
-          <%= investment_form.text_field :investment_type, class: "form-control" %>
+          <%= investment_form.label :product_name, "Nome prodotto", class: "form-label" %>
+          <%= investment_form.text_field :product_name, class: "form-control" %>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
-          <%= investment_form.label :bank_name, "Banca", class: "form-label" %>
-          <%= investment_form.text_field :bank_name, class: "form-control" %>
+          <%= investment_form.label :distributed_by, "Distribuito da", class: "form-label" %>
+          <%= investment_form.text_field :distributed_by, class: "form-control" %>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
-          <%= investment_form.label :deadlines, "Scadenze", class: "form-label" %>
-          <%= investment_form.text_field :deadlines, class: "form-control" %>
+          <%= investment_form.label :subscription_date, "Data sottoscrizione", class: "form-label" %>
+          <%= investment_form.text_field :subscription_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= investment_form.label :purpose, "Finalità", class: "form-label" %>
+          <%= investment_form.select :purpose,
+                                     options_for_select(enum_options(Investment, :purpose), investment_form.object.purpose),
+                                     { include_blank: "Seleziona..." },
+                                     class: "form-select" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= investment_form.label :advised_by, "Chi lo ha consigliato", class: "form-label" %>
+          <%= investment_form.text_field :advised_by, class: "form-control" %>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
           <%= investment_form.label :amount, "€", class: "form-label" %>
@@ -466,6 +494,76 @@
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Titoli</h2>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-add-nested="customer_titles">Aggiungi titolo</button>
+      </div>
+      <div id="customer-titles-items">
+        <%= f.fields_for :customer_titles do |title_form| %>
+          <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+            <%= title_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= title_form.label :title_type, "Tipo", class: "form-label" %>
+              <%= title_form.text_field :title_type, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= title_form.label :isin, "ISIN", class: "form-label" %>
+              <%= title_form.text_field :isin, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= title_form.label :initial_capital, "Capitale iniziale", class: "form-label" %>
+              <%= title_form.number_field :initial_capital, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= title_form.label :expires_on, "Scadenza", class: "form-label" %>
+              <%= title_form.text_field :expires_on, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= title_form.label :rendimento, "Rendimento", class: "form-label" %>
+              <%= title_form.number_field :rendimento, step: :any, class: "form-control" %>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <template id="customer-titles-template">
+    <%= f.fields_for :customer_titles, CustomerTitle.new, child_index: "NEW_RECORD" do |title_form| %>
+      <div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+        <%= title_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+        <div class="col-12 col-md-6 col-lg-3">
+          <%= title_form.label :title_type, "Tipo", class: "form-label" %>
+          <%= title_form.text_field :title_type, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <%= title_form.label :isin, "ISIN", class: "form-label" %>
+          <%= title_form.text_field :isin, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= title_form.label :initial_capital, "Capitale iniziale", class: "form-label" %>
+          <%= title_form.number_field :initial_capital, step: :any, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= title_form.label :expires_on, "Scadenza", class: "form-label" %>
+          <%= title_form.text_field :expires_on, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= title_form.label :rendimento, "Rendimento", class: "form-label" %>
+          <%= title_form.number_field :rendimento, step: :any, class: "form-control" %>
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+        </div>
+      </div>
+    <% end %>
+  </template>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="h5 mb-0">Previdenza</h2>
         <button type="button" class="btn btn-outline-primary btn-sm" data-add-nested="insurances">Aggiungi previdenza</button>
       </div>
@@ -475,26 +573,41 @@
             <%= insurance_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
             <div class="col-12 col-md-6 col-lg-3">
               <%= insurance_form.label :reason, "Motivo", class: "form-label" %>
-              <%= insurance_form.text_area :reason, class: "form-control", rows: 1 %>
+              <%= insurance_form.select :reason,
+                                        options_for_select(enum_options(Insurance, :reason), insurance_form.object.reason),
+                                        { include_blank: "Seleziona..." },
+                                        class: "form-select" %>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
-              <%= insurance_form.label :objective, "Obiettivo", class: "form-label" %>
-              <%= insurance_form.text_area :objective, class: "form-control", rows: 1 %>
+              <%= insurance_form.label :product_name, "Nome prodotto", class: "form-label" %>
+              <%= insurance_form.text_field :product_name, class: "form-control" %>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <%= insurance_form.label :company_name, "Compagnia", class: "form-label" %>
+              <%= insurance_form.text_field :company_name, class: "form-control" %>
             </div>
             <div class="col-12 col-md-4 col-lg-2">
-              <%= insurance_form.label :amount, "Importo", class: "form-label" %>
+              <%= insurance_form.label :investment_frequency, "Importo investito", class: "form-label" %>
+              <%= insurance_form.select :investment_frequency,
+                                        options_for_select(enum_options(Insurance, :investment_frequency), insurance_form.object.investment_frequency),
+                                        { include_blank: "Periodicità..." },
+                                        class: "form-select" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= insurance_form.label :amount, "€", class: "form-label" %>
               <%= insurance_form.number_field :amount, step: :any, class: "form-control" %>
             </div>
             <div class="col-12 col-md-4 col-lg-2">
-              <%= insurance_form.label :rendimento, "Rendimento", class: "form-label" %>
-              <%= insurance_form.number_field :rendimento, step: :any, class: "form-control" %>
+              <%= insurance_form.label :objective, "Obiettivo (rendita/capitale)", class: "form-label" %>
+              <%= insurance_form.number_field :objective, step: :any, class: "form-control" %>
             </div>
             <div class="col-12 col-md-4 col-lg-2">
-              <%= insurance_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
-              <%= insurance_form.select :satisfaction_level,
-                                        options_for_select((1..10).to_a, insurance_form.object.satisfaction_level),
-                                        { include_blank: "..." },
-                                        class: "form-select" %>
+              <%= insurance_form.label :subscription_date, "Data sottoscrizione", class: "form-label" %>
+              <%= insurance_form.text_field :subscription_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+            </div>
+            <div class="col-12 col-md-4 col-lg-2">
+              <%= insurance_form.label :expiry_date, "Data scadenza", class: "form-label" %>
+              <%= insurance_form.text_field :expiry_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
             </div>
             <div class="col-12 d-flex justify-content-end">
               <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
@@ -511,26 +624,41 @@
         <%= insurance_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
         <div class="col-12 col-md-6 col-lg-3">
           <%= insurance_form.label :reason, "Motivo", class: "form-label" %>
-          <%= insurance_form.text_area :reason, class: "form-control", rows: 1 %>
+          <%= insurance_form.select :reason,
+                                    options_for_select(enum_options(Insurance, :reason), insurance_form.object.reason),
+                                    { include_blank: "Seleziona..." },
+                                    class: "form-select" %>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
-          <%= insurance_form.label :objective, "Obiettivo", class: "form-label" %>
-          <%= insurance_form.text_area :objective, class: "form-control", rows: 1 %>
+          <%= insurance_form.label :product_name, "Nome prodotto", class: "form-label" %>
+          <%= insurance_form.text_field :product_name, class: "form-control" %>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <%= insurance_form.label :company_name, "Compagnia", class: "form-label" %>
+          <%= insurance_form.text_field :company_name, class: "form-control" %>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
-          <%= insurance_form.label :amount, "Importo", class: "form-label" %>
+          <%= insurance_form.label :investment_frequency, "Importo investito", class: "form-label" %>
+          <%= insurance_form.select :investment_frequency,
+                                    options_for_select(enum_options(Insurance, :investment_frequency), insurance_form.object.investment_frequency),
+                                    { include_blank: "Periodicità..." },
+                                    class: "form-select" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= insurance_form.label :amount, "€", class: "form-label" %>
           <%= insurance_form.number_field :amount, step: :any, class: "form-control" %>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
-          <%= insurance_form.label :rendimento, "Rendimento", class: "form-label" %>
-          <%= insurance_form.number_field :rendimento, step: :any, class: "form-control" %>
+          <%= insurance_form.label :objective, "Obiettivo (rendita/capitale)", class: "form-label" %>
+          <%= insurance_form.number_field :objective, step: :any, class: "form-control" %>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
-          <%= insurance_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
-          <%= insurance_form.select :satisfaction_level,
-                                    options_for_select((1..10).to_a, insurance_form.object.satisfaction_level),
-                                    { include_blank: "..." },
-                                    class: "form-select" %>
+          <%= insurance_form.label :subscription_date, "Data sottoscrizione", class: "form-label" %>
+          <%= insurance_form.text_field :subscription_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+        </div>
+        <div class="col-12 col-md-4 col-lg-2">
+          <%= insurance_form.label :expiry_date, "Data scadenza", class: "form-label" %>
+          <%= insurance_form.text_field :expiry_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
         </div>
         <div class="col-12 d-flex justify-content-end">
           <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
@@ -554,11 +682,26 @@
               <%= property_form.select :purpose,
                                        options_for_select(enum_options(Property, :purpose), property_form.object.purpose),
                                        { include_blank: "Seleziona..." },
-                                       class: "form-select" %>
+                                       class: "form-select",
+                                       data: { property_purpose_select: true } %>
             </div>
             <div class="col-12 col-md-8 col-lg-7">
               <%= property_form.label :address, "Indirizzo", class: "form-label" %>
               <%= property_form.text_field :address, class: "form-control" %>
+            </div>
+            <div class="row g-3 <%= "d-none" unless property_form.object.instrumental? %>" data-property-instrumental-fields>
+              <div class="col-12 col-md-4">
+                <%= property_form.label :annual_income, "Reddito annuo generato (€)", class: "form-label" %>
+                <%= property_form.number_field :annual_income, step: :any, class: "form-control" %>
+              </div>
+              <div class="col-12 col-md-4">
+                <%= property_form.label :annual_maintenance_cost, "Costi annui di mantenimento (€)", class: "form-label" %>
+                <%= property_form.number_field :annual_maintenance_cost, step: :any, class: "form-control" %>
+              </div>
+              <div class="col-12 col-md-4">
+                <%= property_form.label :commercial_value, "Valore commerciale (€)", class: "form-label" %>
+                <%= property_form.number_field :commercial_value, step: :any, class: "form-control" %>
+              </div>
             </div>
             <div class="col-12 d-flex justify-content-end">
               <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
@@ -578,11 +721,26 @@
           <%= property_form.select :purpose,
                                    options_for_select(enum_options(Property, :purpose), property_form.object.purpose),
                                    { include_blank: "Seleziona..." },
-                                   class: "form-select" %>
+                                   class: "form-select",
+                                   data: { property_purpose_select: true } %>
         </div>
         <div class="col-12 col-md-8 col-lg-7">
           <%= property_form.label :address, "Indirizzo", class: "form-label" %>
           <%= property_form.text_field :address, class: "form-control" %>
+        </div>
+        <div class="row g-3" data-property-instrumental-fields>
+          <div class="col-12 col-md-4">
+            <%= property_form.label :annual_income, "Reddito annuo generato (€)", class: "form-label" %>
+            <%= property_form.number_field :annual_income, step: :any, class: "form-control" %>
+          </div>
+          <div class="col-12 col-md-4">
+            <%= property_form.label :annual_maintenance_cost, "Costi annui di mantenimento (€)", class: "form-label" %>
+            <%= property_form.number_field :annual_maintenance_cost, step: :any, class: "form-control" %>
+          </div>
+          <div class="col-12 col-md-4">
+            <%= property_form.label :commercial_value, "Valore commerciale (€)", class: "form-label" %>
+            <%= property_form.number_field :commercial_value, step: :any, class: "form-control" %>
+          </div>
         </div>
         <div class="col-12 d-flex justify-content-end">
           <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
@@ -599,6 +757,109 @@
 
 <script>
 (function () {
+  function italianDatepickerOptions() {
+    return {
+      closeText: 'Chiudi',
+      prevText: 'Prec',
+      nextText: 'Succ',
+      currentText: 'Oggi',
+      monthNames: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+      monthNamesShort: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
+      dayNames: ['Domenica', 'Lunedi', 'Martedi', 'Mercoledi', 'Giovedi', 'Venerdi', 'Sabato'],
+      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+      dayNamesMin: ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'],
+      weekHeader: 'Sm',
+      firstDay: 1,
+      isRTL: false,
+      showMonthAfterYear: false,
+      yearSuffix: ''
+    };
+  }
+
+  function initializeDatepickers(scope) {
+    if (!window.jQuery || !window.jQuery.fn || !window.jQuery.fn.datepicker) return;
+
+    var locale = italianDatepickerOptions();
+    var $root = scope ? window.jQuery(scope) : window.jQuery(document);
+    $root.find('[data-datepicker="true"]').each(function () {
+      var $input = window.jQuery(this);
+
+      if ($input.hasClass('hasDatepicker')) return;
+
+      $input.datepicker({
+        closeText: locale.closeText,
+        prevText: locale.prevText,
+        nextText: locale.nextText,
+        currentText: locale.currentText,
+        monthNames: locale.monthNames,
+        monthNamesShort: locale.monthNamesShort,
+        dayNames: locale.dayNames,
+        dayNamesShort: locale.dayNamesShort,
+        dayNamesMin: locale.dayNamesMin,
+        weekHeader: locale.weekHeader,
+        firstDay: locale.firstDay,
+        isRTL: locale.isRTL,
+        showMonthAfterYear: locale.showMonthAfterYear,
+        yearSuffix: locale.yearSuffix,
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: '1900:2100'
+      });
+    });
+  }
+
+  function initializeReferrerSelect() {
+    if (!window.jQuery || !window.jQuery.fn || !window.jQuery.fn.select2) return;
+
+    var $select = window.jQuery('[data-referrer-select]');
+    if (!$select.length) return;
+
+    var $badgeContainer = window.jQuery('[data-referrer-badge-container]');
+
+    function updateBadge(data) {
+      if (!data || !data.id) {
+        $badgeContainer.empty();
+        return;
+      }
+
+      var safeText = data.text || 'Cliente selezionato';
+      var safeUrl = data.url || ('/customers/' + data.id);
+
+      $badgeContainer.html(
+        '<span class="badge bg-info-subtle text-dark border">Referente selezionato: <a class="text-decoration-none" href="' + safeUrl + '">' + safeText + '</a></span>'
+      );
+    }
+
+    $select.select2({
+      width: '100%',
+      allowClear: true,
+      placeholder: $select.data('placeholder'),
+      ajax: {
+        url: $select.data('referrer-url'),
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term,
+            exclude_customer_id: $select.data('exclude-customer-id')
+          };
+        },
+        processResults: function (data) {
+          return { results: data.results || [] };
+        }
+      }
+    });
+
+    $select.on('select2:select', function (event) {
+      updateBadge(event.params.data);
+    });
+
+    $select.on('select2:clear', function () {
+      updateBadge(null);
+    });
+  }
+
   function uniqueId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2);
   }
@@ -610,7 +871,46 @@
 
     var html = template.innerHTML.split('NEW_RECORD').join(uniqueId());
     list.insertAdjacentHTML('beforeend', html);
+
+    initializeDatepickers(list);
+
+    if (listId === 'properties-items') {
+      initializePropertyInstrumentalFields(list);
+    }
   }
+
+  function setPropertyInstrumentalVisibility(select) {
+    var item = select.closest('[data-nested-item]');
+    if (!item) return;
+
+    var fieldsWrapper = item.querySelector('[data-property-instrumental-fields]');
+    if (!fieldsWrapper) return;
+
+    var isInstrumental = select.value === 'instrumental';
+    fieldsWrapper.classList.toggle('d-none', !isInstrumental);
+
+    fieldsWrapper.querySelectorAll('input').forEach(function (input) {
+      input.disabled = !isInstrumental;
+    });
+  }
+
+  function initializePropertyInstrumentalFields(scope) {
+    var root = scope || document;
+    root.querySelectorAll('[data-property-purpose-select]').forEach(function (select) {
+      if (!select.dataset.propertyPurposeBound) {
+        select.addEventListener('change', function () {
+          setPropertyInstrumentalVisibility(select);
+        });
+        select.dataset.propertyPurposeBound = 'true';
+      }
+
+      setPropertyInstrumentalVisibility(select);
+    });
+  }
+
+  initializeDatepickers(document);
+  initializeReferrerSelect();
+  initializePropertyInstrumentalFields(document);
 
   document.querySelectorAll('[data-add-nested]').forEach(function (button) {
     button.addEventListener('click', function () {

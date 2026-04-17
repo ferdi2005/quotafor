@@ -162,6 +162,7 @@ it:
         outcome: "Esito"
       recurring_activity:
         topic: "Argomento"
+        activity_date: "Data"
         periodicity: "Periodicità"
         weekday: "Giorno della settimana"
         starts_at: "Inizio"
@@ -224,6 +225,7 @@ it:
         daily: "Giornaliero"
         weekly: "Settimanale"
         monthly: "Mensile"
+        one_time: "Singola"
       weekday:
         monday: "Lunedì"
         tuesday: "Martedì"
@@ -256,6 +258,24 @@ it:
       purpose:
         instrumental: "Strumentale"
         investment: "Investimento"
+    insurance:
+      reason:
+        rendita: "Rendita"
+        capitale: "Capitale"
+        misto: "Misto"
+      investment_frequency:
+        unico: "Unico"
+        mensile: "Mensile"
+        annuale: "Annuale"
+    investment:
+      purpose:
+        liquidity: "Liquidita"
+        growth: "Crescita del capitale"
+        income: "Reddito periodico"
+        retirement: "Pensione"
+        protection: "Protezione"
+        diversification: "Diversificazione"
+        other: "Altro"
 
   helpers:
     submit:

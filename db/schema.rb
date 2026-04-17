@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_15_233100) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_233100) do
     t.bigint "customer_id", null: false
     t.text "deadlines"
     t.text "reason"
+    t.string "referente"
     t.decimal "rendimento"
     t.integer "satisfaction_level"
     t.text "use"
@@ -128,6 +129,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_233100) do
     t.index ["customer_id"], name: "index_customer_objectives_on_customer_id"
   end
 
+  create_table "customer_titles", force: :cascade do |t|
+    t.bigint "customer_id", null: false
+    t.date "expires_on"
+    t.decimal "initial_capital"
+    t.string "isin"
+    t.decimal "rendimento"
+    t.string "title_type"
+    t.index ["customer_id"], name: "index_customer_titles_on_customer_id"
+  end
+
   create_table "customers", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.decimal "annual_income"
@@ -170,26 +181,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_233100) do
 
   create_table "insurances", force: :cascade do |t|
     t.decimal "amount"
+    t.string "company_name"
     t.bigint "customer_id", null: false
-    t.text "objective"
-    t.text "reason"
+    t.date "expiry_date"
+    t.integer "investment_frequency"
+    t.decimal "objective", precision: 12, scale: 2
+    t.string "product_name"
+    t.string "reason"
     t.decimal "rendimento"
     t.integer "satisfaction_level"
+    t.date "subscription_date"
     t.index ["customer_id"], name: "index_insurances_on_customer_id"
   end
 
   create_table "investments", force: :cascade do |t|
+    t.string "advised_by"
     t.decimal "amount"
-    t.string "bank_name"
     t.bigint "customer_id", null: false
-    t.text "deadlines"
-    t.string "investment_type"
+    t.string "distributed_by"
+    t.string "product_name"
+    t.string "purpose"
     t.integer "satisfaction_level"
+    t.date "subscription_date"
     t.index ["customer_id"], name: "index_investments_on_customer_id"
   end
 
   create_table "properties", force: :cascade do |t|
     t.text "address"
+    t.decimal "annual_income", precision: 12, scale: 2
+    t.decimal "annual_maintenance_cost", precision: 12, scale: 2
+    t.decimal "commercial_value", precision: 12, scale: 2
     t.bigint "customer_id", null: false
     t.integer "purpose"
     t.index ["customer_id"], name: "index_properties_on_customer_id"
@@ -197,6 +218,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_233100) do
 
   create_table "recurring_activities", force: :cascade do |t|
     t.boolean "active", default: true, null: false
+    t.date "activity_date"
     t.datetime "created_at", null: false
     t.time "ends_at", null: false
     t.string "location"
@@ -257,6 +279,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_233100) do
   add_foreign_key "contact_calls", "users"
   add_foreign_key "customer_expenses", "customers"
   add_foreign_key "customer_objectives", "customers"
+  add_foreign_key "customer_titles", "customers"
   add_foreign_key "customers", "customers", column: "referred_by_customer_id"
   add_foreign_key "customers", "users"
   add_foreign_key "in_app_notifications", "calendar_events"

@@ -41,6 +41,23 @@ class RecurringActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to recurring_activities_path
   end
 
+  test "POST create attività singola con data crea attività e redirect" do
+    assert_difference "RecurringActivity.count", 1 do
+      post recurring_activities_url, params: {
+        recurring_activity: {
+          topic: "study",
+          periodicity: "one_time",
+          activity_date: Date.current + 1.day,
+          starts_at: Time.current.change(hour: 9, min: 0),
+          ends_at: Time.current.change(hour: 10, min: 0),
+          active: true
+        }
+      }
+    end
+
+    assert_redirected_to recurring_activities_path
+  end
+
   test "POST create con dati invalidi re-render new" do
     assert_no_difference "RecurringActivity.count" do
       post recurring_activities_url, params: {

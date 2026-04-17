@@ -13,6 +13,10 @@ Rails.application.routes.draw do
   end
 
   resources :customers do
+    collection do
+      get :referrer_suggestions
+    end
+
     resources :appointments, only: %i[new create edit update destroy]
     resources :contact_calls, only: %i[new create edit update destroy]
     resources :customer_objectives, only: %i[new create edit update destroy]

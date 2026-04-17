@@ -3,7 +3,7 @@
 ## Descrizione
 
 QuotaFor è un'applicazione CRM Rails pensata per promotori finanziari.
-Consente di gestire clienti, appuntamenti, attività ricorrenti, note di timeline e notifiche.
+Consente di gestire clienti, appuntamenti, Attività, note di timeline e notifiche.
 Include un feed ICS per sincronizzare gli appuntamenti con Google Calendar / Apple Calendar e un sistema di reminder via email e notifiche in-app.
 
 ## Requisiti

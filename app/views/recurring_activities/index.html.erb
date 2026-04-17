@@ -3,8 +3,8 @@
     <div class="card shadow-sm">
       <div class="card-body d-flex justify-content-between align-items-center">
         <div>
-          <h1 class="h4 mb-1">Attività ricorrenti</h1>
-          <p class="text-muted mb-0">Impegni fissi settimanali o periodici.</p>
+          <h1 class="h4 mb-1">Attività pianificate</h1>
+          <p class="text-muted mb-0">Impegni ricorrenti o singoli, sempre nel calendario.</p>
         </div>
         <%= link_to "Nuova attività", new_recurring_activity_path, class: "btn btn-primary" %>
       </div>
@@ -19,8 +19,8 @@
             <thead class="table-light">
               <tr>
                 <th>Argomento</th>
-                <th>Periodicità</th>
-                <th>Giorno</th>
+                <th>Tipo</th>
+                <th>Data/Giorno</th>
                 <th>Orario</th>
                 <th>Luogo</th>
                 <th>Stato</th>
@@ -33,7 +33,13 @@
                   <tr>
                     <td><%= activity.topic %></td>
                     <td><%= enum_t(activity, :periodicity) %></td>
-                    <td><%= enum_t(activity, :weekday) %></td>
+                    <td>
+                      <% if activity.one_time? %>
+                        <%= activity.activity_date ? l(activity.activity_date) : "-" %>
+                      <% else %>
+                        <%= enum_t(activity, :weekday) %>
+                      <% end %>
+                    </td>
                     <td><%= activity.starts_at.strftime("%H:%M") %> – <%= activity.ends_at.strftime("%H:%M") %></td>
                     <td><%= activity.location.presence || "-" %></td>
                     <td>
@@ -46,14 +52,14 @@
                     <td class="text-end">
                       <%= link_to "Modifica", edit_recurring_activity_path(activity), class: "btn btn-sm btn-outline-secondary me-1" %>
                       <%= button_to "Elimina", recurring_activity_path(activity), method: :delete,
-                            data: { turbo_confirm: "Eliminare questa attività ricorrente?" },
+                            data: { turbo_confirm: "Eliminare questa attività?" },
                             class: "btn btn-sm btn-outline-danger" %>
                     </td>
                   </tr>
                 <% end %>
               <% else %>
                 <tr>
-                  <td colspan="7" class="text-center text-muted py-4">Nessuna attività ricorrente configurata.</td>
+                  <td colspan="7" class="text-center text-muted py-4">Nessuna attività configurata.</td>
                 </tr>
               <% end %>
             </tbody>

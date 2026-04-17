@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer: one
+  title_type: Obbligazione
+  isin: IT0000000001
+  initial_capital: 10000
+  expires_on: 2028-12-31
+  rendimento: 3.5
+
+two:
+  customer: two
+  title_type: ETF
+  isin: LU0000000002
+  initial_capital: 5000
+  expires_on: 2030-06-30
+  rendimento: 4.2

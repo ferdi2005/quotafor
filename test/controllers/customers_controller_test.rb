@@ -33,6 +33,69 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user, Customer.last.user
   end
 
+  test "create assigns referred_by_customer when selected" do
+    assert_difference "Customer.count", 1 do
+      post customers_path, params: {
+        customer: {
+          first_name: "Referenziato",
+          last_name: "Nuovo",
+          relationship_started_on: Date.current,
+          customer_type: "new_customer",
+          referred_by_customer_id: @own_customer.id
+        }
+      }
+    end
+
+    assert_equal @own_customer, Customer.last.referred_by_customer
+  end
+
+  test "create ignores referred_by_customer from another user" do
+    assert_difference "Customer.count", 1 do
+      post customers_path, params: {
+        customer: {
+          first_name: "Referenziato",
+          last_name: "Sicuro",
+          relationship_started_on: Date.current,
+          customer_type: "new_customer",
+          referred_by_customer_id: @other_customer.id
+        }
+      }
+    end
+
+    assert_nil Customer.last.referred_by_customer
+  end
+
+  test "referrer_suggestions returns only current user customers" do
+    own_extra_customer = Customer.create!(
+      user: @user,
+      first_name: "Mario",
+      last_name: "Rossi",
+      relationship_started_on: Date.current,
+      customer_type: :new_customer
+    )
+
+    get referrer_suggestions_customers_path, params: { q: "mario" }, as: :json
+
+    assert_response :success
+    payload = JSON.parse(response.body)
+    result_ids = payload.fetch("results").map { |entry| entry.fetch("id") }
+
+    assert_includes result_ids, own_extra_customer.id
+    assert_not_includes result_ids, @other_customer.id
+  end
+
+  test "referrer_suggestions excludes selected customer id" do
+    get referrer_suggestions_customers_path,
+        params: { q: @own_customer.first_name, exclude_customer_id: @own_customer.id },
+        as: :json
+
+    assert_response :success
+    payload = JSON.parse(response.body)
+    result_ids = payload.fetch("results").map { |entry| entry.fetch("id") }
+
+    assert_not_includes result_ids, @own_customer.id
+  end
+
   test "destroy removes own customer" do
     assert_difference "Customer.count", -1 do
       delete customer_path(@own_customer)

@@ -9,29 +9,24 @@ class AppointmentsController < ApplicationController
       starts_at: Time.current.change(min: 0),
       ok_current_account: @customer.ok_current_account
     )
-    prepare_referral_customers
   end
 
   def create
     @appointment = @customer.appointments.new(appointment_params.merge(user: current_user))
-    prepare_referral_customers
 
-    if save_appointment_and_referrals
+    if save_appointment
       redirect_to customer_path(@customer), notice: "Appuntamento creato e inserito in calendario."
     else
       render :new, status: :unprocessable_entity
     end
   end
 
-  def edit
-    prepare_referral_customers
-  end
+  def edit; end
 
   def update
     @appointment.assign_attributes(appointment_params)
-    prepare_referral_customers
 
-    if save_appointment_and_referrals
+    if save_appointment
       redirect_to customer_path(@customer), notice: "Appuntamento aggiornato e sincronizzato nel calendario."
     else
       render :edit, status: :unprocessable_entity
@@ -64,7 +59,6 @@ class AppointmentsController < ApplicationController
       :visit_feedback,
       :invested_resources,
       :presentation_notes,
-      :referrals,
       :next_appointment_at,
       :next_appointment_callback,
       :ok_current_account,
@@ -76,74 +70,10 @@ class AppointmentsController < ApplicationController
     )
   end
 
-  def referral_customer_params_list
-    appointment_params = params[:appointment]
-    return [] unless appointment_params.present?
-
-    permitted_appointment = if appointment_params.is_a?(ActionController::Parameters)
-      appointment_params
-    else
-      ActionController::Parameters.new(appointment_params)
-    end
-
-    referral_entries = permitted_appointment.permit(
-      referral_customers: [
-        :first_name,
-        :last_name,
-        :birth_date,
-        :profession,
-        :phone,
-        :email,
-        :personal_summary,
-        :prospects,
-        :satisfaction_level
-      ]
-    ).fetch(:referral_customers, {})
-
-    referral_entries.values.filter_map do |permitted|
-      next if permitted.values.all?(&:blank?)
-
-      permitted
-    end
-  end
-
-  def build_referral_customers
-    referral_customer_params_list.map do |attributes|
-      current_user.customers.new(
-        attributes.merge(
-          referred_by_customer: @customer,
-          relationship_started_on: Date.current,
-          customer_type: :new_customer,
-          active: true
-        )
-      )
-    end
-  end
-
-  def prepare_referral_customers
-    @referral_customers_to_save = build_referral_customers
-    @referral_customers = @referral_customers_to_save.presence || [ build_blank_referral_customer ]
-  end
-
-  def build_blank_referral_customer
-    current_user.customers.new(
-      referred_by_customer: @customer,
-      relationship_started_on: Date.current,
-      customer_type: :new_customer,
-      active: true
-    )
-  end
-
-  def save_appointment_and_referrals
-    appointment_valid = @appointment.valid?
-    referrals_valid = @referral_customers_to_save.all?(&:valid?)
-
-    return false unless appointment_valid && referrals_valid
-
+  def save_appointment
     Appointment.transaction do
       @appointment.save!
       @customer.update_column(:ok_current_account, @appointment.ok_current_account)
-      @referral_customers_to_save.each(&:save!)
     end
 
     true

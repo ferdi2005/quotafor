@@ -5,6 +5,7 @@ one:
   topic: Studio
   weekday: 1
   periodicity: 1
+  activity_date:
   starts_at: 2026-03-14 10:48:23
   ends_at: 2026-03-14 10:48:23
   location: MyString
@@ -16,6 +17,7 @@ two:
   topic: Studio
   weekday: 1
   periodicity: 1
+  activity_date:
   starts_at: 2026-03-14 10:48:23
   ends_at: 2026-03-14 10:48:23
   location: MyString

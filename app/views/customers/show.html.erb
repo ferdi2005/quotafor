@@ -28,11 +28,14 @@
         <div class="row g-3">
           <div class="col-md-4">
             <p class="mb-1"><strong>Età:</strong> <%= @customer.age || "-" %></p>
+            <p class="mb-1"><strong>Data di nascita:</strong> <%= @customer.birth_date.present? ? l(@customer.birth_date) : "-" %></p>
             <p class="mb-1"><strong>Professione:</strong> <%= @customer.profession.presence || "-" %></p>
+            <p class="mb-1"><strong>Reddito annuo:</strong> <%= @customer.annual_income.present? ? number_to_currency(@customer.annual_income) : "-" %></p>
             <p class="mb-1"><strong>Totale incassi:</strong> <%= number_to_currency(@customer.total_income) %></p>
             <p class="mb-1"><strong>Risparmio:</strong> <%= number_to_currency(@customer.savings) %></p>
           </div>
           <div class="col-md-4">
+            <p class="mb-1"><strong>Cliente attivo:</strong> <%= @customer.active? ? "Sì" : "No" %></p>
             <p class="mb-1"><strong>Livello soddisfazione:</strong> <%= @customer.satisfaction_level.present? ? "#{@customer.satisfaction_level}/10" : "-" %></p>
             <p class="mb-1"><strong>Prospettive:</strong></p>
             <p class="text-muted small"><%= @customer.prospects.presence || "-" %></p>
@@ -62,7 +65,10 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
           <h2 class="h6 mb-0">Referral generati</h2>
-          <span class="badge bg-secondary"><%= @referred_customers.size %></span>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary"><%= @referred_customers.size %></span>
+            <%= link_to "Aggiungi referral", new_customer_path(referred_by_customer_id: @customer.id), class: "btn btn-sm btn-primary" %>
+          </div>
         </div>
 
         <% if @referred_customers.any? %>
@@ -111,8 +117,10 @@
                   <th>Nome</th>
                   <th>Cognome</th>
                   <th>Età</th>
+                  <th>Data di nascita</th>
                   <th>Professione</th>
                   <th>Incassi annuali</th>
+                  <th>Soddisfazione lavoro</th>
                   <th>Prospettive</th>
                 </tr>
               </thead>
@@ -122,8 +130,10 @@
                     <td><%= spouse.first_name %></td>
                     <td><%= spouse.last_name %></td>
                     <td><%= spouse.age || "-" %></td>
+                    <td><%= spouse.birth_date.present? ? l(spouse.birth_date) : "-" %></td>
                     <td><%= spouse.profession.presence || "-" %></td>
                     <td><%= spouse.annual_income.present? ? number_to_currency(spouse.annual_income) : "-" %></td>
+                    <td><%= spouse.satisfaction_level.present? ? "#{spouse.satisfaction_level}/10" : "-" %></td>
                     <td><%= spouse.prospects.presence || "-" %></td>
                   </tr>
                 <% end %>
@@ -147,6 +157,7 @@
                   <th>Nome</th>
                   <th>Cognome</th>
                   <th>Età</th>
+                  <th>Data di nascita</th>
                   <th>Professione</th>
                   <th>Incassi annuali</th>
                   <th>Desideri</th>
@@ -159,6 +170,7 @@
                     <td><%= child.first_name %></td>
                     <td><%= child.last_name %></td>
                     <td><%= child.age || "-" %></td>
+                    <td><%= child.birth_date.present? ? l(child.birth_date) : "-" %></td>
                     <td><%= child.profession.presence || "-" %></td>
                     <td><%= child.annual_income.present? ? number_to_currency(child.annual_income) : "-" %></td>
                     <td><span class="small"><%= child.desires.presence || "-" %></span></td>
@@ -183,11 +195,10 @@
               <thead>
                 <tr>
                   <th>Banca</th>
+                  <th>Referente</th>
                   <th>Perché</th>
                   <th>Uso</th>
-                  <th>Cosa ha</th>
-                  <th>Importo</th>
-                  <th>Rendimento</th>
+                  <th>Saldo c/c</th>
                   <th>Scadenze</th>
                   <th>Soddisfazione</th>
                 </tr>
@@ -196,13 +207,84 @@
                 <% @customer.banks.each do |bank| %>
                   <tr>
                     <td><strong><%= bank.bank_name %></strong></td>
+                    <td><small><%= bank.referente.presence || "-" %></small></td>
                     <td><small><%= bank.reason.presence || "-" %></small></td>
                     <td><small><%= bank.use.presence || "-" %></small></td>
-                    <td><small><%= bank.what_has.presence || "-" %></small></td>
-                    <td><%= bank.amount.present? ? number_to_currency(bank.amount) : "-" %></td>
-                    <td><%= bank.rendimento.present? ? number_to_percentage(bank.rendimento, precision: 2) : "-" %></td>
+                    <td><%= bank.current_account_balance.present? ? number_to_currency(bank.current_account_balance) : "-" %></td>
                     <td><small><%= bank.deadlines.presence || "-" %></small></td>
                     <td><%= bank.satisfaction_level.present? ? "#{bank.satisfaction_level}/10" : "-" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @customer.customer_titles.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Titoli</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>ISIN</th>
+                  <th>Capitale iniziale</th>
+                  <th>Scadenza</th>
+                  <th>Rendimento</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer.customer_titles.each do |title| %>
+                  <tr>
+                    <td><small><%= title.title_type.presence || "-" %></small></td>
+                    <td><small><%= title.isin.presence || "-" %></small></td>
+                    <td><%= title.initial_capital.present? ? number_to_currency(title.initial_capital) : "-" %></td>
+                    <td><%= title.expires_on.present? ? l(title.expires_on) : "-" %></td>
+                    <td><%= title.rendimento.present? ? number_to_percentage(title.rendimento, precision: 2) : "-" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @customer.investments.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Investimenti</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Nome prodotto</th>
+                  <th>Distribuito da</th>
+                  <th>Data sottoscrizione</th>
+                  <th>Finalità</th>
+                  <th>Chi lo ha consigliato</th>
+                  <th>Importo</th>
+                  <th>Soddisfazione</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer.investments.each do |investment| %>
+                  <tr>
+                    <td><small><%= investment.product_name.presence || "-" %></small></td>
+                    <td><small><%= investment.distributed_by.presence || "-" %></small></td>
+                    <td><small><%= investment.subscription_date.present? ? l(investment.subscription_date) : "-" %></small></td>
+                    <td><small><%= investment.purpose.present? ? enum_t(investment, :purpose) : "-" %></small></td>
+                    <td><small><%= investment.advised_by.presence || "-" %></small></td>
+                    <td><%= investment.amount.present? ? number_to_currency(investment.amount) : "-" %></td>
+                    <td><%= investment.satisfaction_level.present? ? "#{investment.satisfaction_level}/10" : "-" %></td>
                   </tr>
                 <% end %>
               </tbody>
@@ -222,21 +304,31 @@
             <table class="table table-sm mb-0">
               <thead>
                 <tr>
-                  <th>Perché</th>
+                  <th>Motivo</th>
+                  <th>Prodotto</th>
+                  <th>Compagnia</th>
                   <th>Obiettivo</th>
                   <th>Importo</th>
-                  <th>Rendimento</th>
-                  <th>Soddisfazione</th>
+                  <th>Sottoscrizione</th>
+                  <th>Scadenza</th>
                 </tr>
               </thead>
               <tbody>
                 <% @customer.insurances.each do |insurance| %>
                   <tr>
-                    <td><small><%= insurance.reason.presence || "-" %></small></td>
-                    <td><small><%= insurance.objective.presence || "-" %></small></td>
-                    <td><%= insurance.amount.present? ? number_to_currency(insurance.amount) : "-" %></td>
-                    <td><%= insurance.rendimento.present? ? number_to_percentage(insurance.rendimento, precision: 2) : "-" %></td>
-                    <td><%= insurance.satisfaction_level.present? ? "#{insurance.satisfaction_level}/10" : "-" %></td>
+                    <td><small><%= insurance.reason.present? ? enum_t(insurance, :reason) : "-" %></small></td>
+                    <td><small><%= insurance.product_name.presence || "-" %></small></td>
+                    <td><small><%= insurance.company_name.presence || "-" %></small></td>
+                    <td><%= insurance.objective.present? ? number_to_currency(insurance.objective) : "-" %></td>
+                    <td>
+                      <% if insurance.amount.present? %>
+                        <small><%= [insurance.investment_frequency.present? ? enum_t(insurance, :investment_frequency) : nil, number_to_currency(insurance.amount)].compact.join(" - ") %></small>
+                      <% else %>
+                        -
+                      <% end %>
+                    </td>
+                    <td><small><%= insurance.subscription_date.present? ? l(insurance.subscription_date) : "-" %></small></td>
+                    <td><small><%= insurance.expiry_date.present? ? l(insurance.expiry_date) : "-" %></small></td>
                   </tr>
                 <% end %>
               </tbody>

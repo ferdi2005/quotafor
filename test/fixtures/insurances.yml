@@ -2,14 +2,18 @@
 
 one:
   customer: one
-  reason: MyText
-  objective: MyText
-  amount: 9.99
-  satisfaction_level: 1
+  reason: rendita
+  objective: 120000
+  amount: 250
+  investment_frequency: mensile
+  product_name: "Piano Pensione A"
+  company_name: "Compagnia Alfa"
 
 two:
   customer: two
-  reason: MyText
-  objective: MyText
-  amount: 9.99
-  satisfaction_level: 1
+  reason: capitale
+  objective: 80000
+  amount: 5000
+  investment_frequency: annuale
+  product_name: "Polizza Vita B"
+  company_name: "Compagnia Beta"

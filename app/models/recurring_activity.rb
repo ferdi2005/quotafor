@@ -2,7 +2,7 @@ class RecurringActivity < ApplicationRecord
   belongs_to :user
   has_many :calendar_events, as: :source, dependent: :destroy
 
-  enum :periodicity, { daily: 0, weekly: 1, monthly: 2 }
+  enum :periodicity, { daily: 0, weekly: 1, monthly: 2, one_time: 3 }
   enum :weekday, {
     monday: 1,
     tuesday: 2,
@@ -13,7 +13,9 @@ class RecurringActivity < ApplicationRecord
     sunday: 7
   }
 
-  validates :topic, :weekday, :periodicity, :starts_at, :ends_at, presence: true
+  validates :topic, :periodicity, :starts_at, :ends_at, presence: true
+  validates :activity_date, presence: true, if: :one_time?
+  validates :weekday, presence: true, unless: :one_time?
   validate :end_after_start
 
   after_commit :sync_calendar_events, on: %i[create update]
@@ -28,29 +30,33 @@ class RecurringActivity < ApplicationRecord
   end
 
   def sync_calendar_events
-    calendar_events.where("starts_at >= ?", Time.zone.now.beginning_of_day).delete_all
-    return unless active?
+    previous_periodicity = previous_changes["periodicity"]&.first
 
-    occurrence_dates.each do |date|
-      start_time = Time.zone.local(date.year, date.month, date.day, starts_at.hour, starts_at.min)
-      end_time = Time.zone.local(date.year, date.month, date.day, ends_at.hour, ends_at.min)
+    if one_time?
+      calendar_events.delete_all
+      return unless active? && activity_date.present?
 
-      calendar_events.create!(
-        user: user,
-        title: "Attività - #{topic}",
-        description: notes.presence || "Attività ricorrente #{topic}",
-        starts_at: start_time,
-        ends_at: end_time,
-        category: :recurring_activity,
-        color: recurring_color,
-        source: self
-      )
+      create_calendar_event_for(activity_date)
+    else
+      if previous_periodicity == "one_time"
+        calendar_events.delete_all
+      else
+        calendar_events.where("starts_at >= ?", Time.zone.now.beginning_of_day).delete_all
+      end
+
+      return unless active?
+
+      occurrence_dates.each do |date|
+        create_calendar_event_for(date)
+      end
     end
   rescue StandardError => e
     Rails.logger.error("Recurring activity sync failed for #{id}: #{e.message}")
   end
 
   def occurrence_dates
+    return [ activity_date ] if one_time?
+
     today = Time.zone.today
     horizon = today + 60.days
 
@@ -80,5 +86,25 @@ class RecurringActivity < ApplicationRecord
 
   def recurring_color
     "#0d6efd"
+  end
+
+  def create_calendar_event_for(date)
+    start_time = Time.zone.local(date.year, date.month, date.day, starts_at.hour, starts_at.min)
+    end_time = Time.zone.local(date.year, date.month, date.day, ends_at.hour, ends_at.min)
+
+    calendar_events.create!(
+      user: user,
+      title: "Attività - #{topic}",
+      description: notes.presence || default_description,
+      starts_at: start_time,
+      ends_at: end_time,
+      category: :recurring_activity,
+      color: recurring_color,
+      source: self
+    )
+  end
+
+  def default_description
+    one_time? ? "Attività singola #{topic}" : "Attività ricorrente #{topic}"
   end
 end

@@ -3,7 +3,7 @@ class RecurringActivitiesController < ApplicationController
   before_action :set_recurring_activity, only: %i[edit update destroy]
 
   def index
-    @recurring_activities = current_user.recurring_activities.order(:weekday, :starts_at)
+    @recurring_activities = current_user.recurring_activities.order(:periodicity, :activity_date, :weekday, :starts_at)
   end
 
   def new
@@ -13,7 +13,7 @@ class RecurringActivitiesController < ApplicationController
   def create
     @recurring_activity = current_user.recurring_activities.build(recurring_activity_params)
     if @recurring_activity.save
-      redirect_to recurring_activities_path, notice: "Attività ricorrente aggiunta con successo."
+      redirect_to recurring_activities_path, notice: "Attività aggiunta con successo."
     else
       render :new, status: :unprocessable_entity
     end
@@ -23,7 +23,7 @@ class RecurringActivitiesController < ApplicationController
 
   def update
     if @recurring_activity.update(recurring_activity_params)
-      redirect_to recurring_activities_path, notice: "Attività ricorrente aggiornata con successo."
+      redirect_to recurring_activities_path, notice: "Attività aggiornata con successo."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -31,7 +31,7 @@ class RecurringActivitiesController < ApplicationController
 
   def destroy
     @recurring_activity.destroy
-    redirect_to recurring_activities_path, notice: "Attività ricorrente eliminata."
+    redirect_to recurring_activities_path, notice: "Attività eliminata."
   end
 
   private
@@ -41,6 +41,6 @@ class RecurringActivitiesController < ApplicationController
   end
 
   def recurring_activity_params
-    params.require(:recurring_activity).permit(:topic, :periodicity, :weekday, :starts_at, :ends_at, :location, :notes, :active)
+    params.require(:recurring_activity).permit(:topic, :periodicity, :activity_date, :weekday, :starts_at, :ends_at, :location, :notes, :active)
   end
 end
