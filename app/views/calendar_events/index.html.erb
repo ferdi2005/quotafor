@@ -7,7 +7,8 @@
 <% range_defaults = {
   "day" => [ Date.current, Date.current ],
   "week" => [ Date.current.beginning_of_week, Date.current.end_of_week ],
-  "month" => [ Date.current, Date.current.end_of_month ]
+  "month" => [ Date.current, Date.current.end_of_month ],
+  "next_month" => [ Date.current.next_month.beginning_of_month, Date.current.next_month.end_of_month ]
 } %>
 <% default_from, default_to = range_defaults.fetch(@range) %>
 <% range_from = @date_from || default_from %>
@@ -49,6 +50,8 @@
                     class: "btn btn-sm #{@range == 'week' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
               <%= link_to "Mese", calendar_events_path(current_query.merge("range" => "month", "date_from" => Date.current.to_s, "date_to" => Date.current.end_of_month.to_s)),
                     class: "btn btn-sm #{@range == 'month' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+                <%= link_to "Mese prossimo", calendar_events_path(current_query.merge("range" => "next_month", "date_from" => Date.current.next_month.beginning_of_month.to_s, "date_to" => Date.current.next_month.end_of_month.to_s)),
+                  class: "btn btn-sm #{@range == 'next_month' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
             </div>
           </div>
 

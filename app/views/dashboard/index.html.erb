@@ -56,11 +56,11 @@
                 <%= f.label :profession, "Professione", class: "form-label" %>
                 <%= f.text_field :profession, value: @filters[:profession], class: "form-control" %>
               </div>
+              <div class="col-md-3">
+                <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
+                <%= f.date_field :relationship_started_on, value: @filters[:relationship_started_on], class: "form-control" %>
+              </div>
             <% end %>
-            <div class="col-md-3">
-              <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
-              <%= f.date_field :relationship_started_on, value: @filters[:relationship_started_on], class: "form-control" %>
-            </div>
             <div class="col-md-4">
               <%= f.label :customer_type, "Tipo cliente", class: "form-label" %>
               <%= f.select :customer_type,

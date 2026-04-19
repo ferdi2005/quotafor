@@ -2,7 +2,7 @@ class CalendarEventsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @range = params[:range].presence_in(%w[day week month]) || "month"
+    @range = params[:range].presence_in(%w[day week month next_month]) || "month"
     @kind = params[:kind].presence_in(%w[all customer_data activities appointments]) || "all"
     default_from, default_to = default_period(@range)
 
@@ -34,6 +34,9 @@ class CalendarEventsController < ApplicationController
       [ today, today ]
     when "week"
       [ today.beginning_of_week, today.end_of_week ]
+    when "next_month"
+      next_month = today.next_month
+      [ next_month.beginning_of_month, next_month.end_of_month ]
     else
       [ today, today.end_of_month ]
     end

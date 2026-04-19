@@ -91,4 +91,51 @@ class CalendarEventsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, follow_up.customer.full_name
     assert_not_includes response.body, first_meeting.customer.full_name
   end
+
+  test "GET index with next_month range shows only next month events" do
+    current_month_customer = Customer.create!(
+      user: @user,
+      first_name: "Current",
+      last_name: "Month",
+      relationship_started_on: Date.current,
+      customer_type: :existing_customer
+    )
+    next_month_customer = Customer.create!(
+      user: @user,
+      first_name: "Next",
+      last_name: "Month",
+      relationship_started_on: Date.current,
+      customer_type: :existing_customer
+    )
+    current_month_date = Date.current.beginning_of_month + 1.day
+    next_month_date = Date.current.next_month.beginning_of_month + 1.day
+
+    CalendarEvent.create!(
+      user: @user,
+      customer: current_month_customer,
+      title: "Evento mese corrente",
+      description: "d",
+      starts_at: Time.zone.local(current_month_date.year, current_month_date.month, current_month_date.day, 10, 0, 0),
+      ends_at: Time.zone.local(current_month_date.year, current_month_date.month, current_month_date.day, 11, 0, 0),
+      category: :customer_appointment,
+      color: "#198754"
+    )
+
+    CalendarEvent.create!(
+      user: @user,
+      customer: next_month_customer,
+      title: "Evento mese prossimo",
+      description: "d",
+      starts_at: Time.zone.local(next_month_date.year, next_month_date.month, next_month_date.day, 10, 0, 0),
+      ends_at: Time.zone.local(next_month_date.year, next_month_date.month, next_month_date.day, 11, 0, 0),
+      category: :customer_appointment,
+      color: "#198754"
+    )
+
+    get calendar_events_path(range: "next_month")
+
+    assert_response :success
+    assert_includes response.body, "Evento mese prossimo"
+    assert_not_includes response.body, "Evento mese corrente"
+  end
 end
