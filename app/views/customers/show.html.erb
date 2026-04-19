@@ -1,7 +1,7 @@
 <div class="row g-3">
   <div class="col-12">
     <div class="card shadow-sm">
-      <div class="card-body d-flex flex-wrap justify-content-between gap-2">
+      <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-2">
         <div>
           <h1 class="h4 mb-1"><%= @customer.full_name %></h1>
           <p class="text-muted mb-0">
@@ -9,11 +9,16 @@
             | Professione: <%= @customer.profession.presence || "-" %>
             | Inizio rapporto: <%= l(@customer.relationship_started_on) %>
           </p>
+          <div class="mt-2">
+            <span class="small text-uppercase text-muted d-block">RFA previsto promotore</span>
+            <span class="h2 fw-bold text-primary mb-0 d-inline-block"><%= number_to_currency(@customer.user.rfa_expected) %></span>
+            <div class="mt-1">
+              <span class="small text-uppercase text-muted me-2">Numero contratti</span>
+              <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle"><%= @customer.contracts_count %></span>
+            </div>
+          </div>
         </div>
-        <div class="d-flex flex-wrap gap-2">
-          <%= link_to "Nuovo appuntamento", new_customer_appointment_path(@customer), class: "btn btn-primary" %>
-          <%= link_to "Nuova telefonata", new_customer_contact_call_path(@customer), class: "btn btn-outline-primary" %>
-          <%= link_to "Nuovo obiettivo", new_customer_customer_objective_path(@customer), class: "btn btn-outline-primary" %>
+        <div class="d-flex flex-wrap align-items-start gap-2">
           <%= link_to "Modifica", edit_customer_path(@customer), class: "btn btn-outline-secondary" %>
           <%= link_to "Dashboard", dashboard_path, class: "btn btn-outline-secondary" %>
         </div>
@@ -454,6 +459,7 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h2 class="h6 mb-0">Appuntamenti</h2>
+          <%= link_to "Nuovo appuntamento", new_customer_appointment_path(@customer), class: "btn btn-sm btn-primary" %>
         </div>
         <% if @appointments.any? %>
           <ul class="list-group list-group-flush">
@@ -483,7 +489,10 @@
   <div class="col-12 col-lg-6">
     <div class="card shadow-sm h-100" id="customer-objectives">
       <div class="card-body">
-        <h2 class="h6">Obiettivi del cliente</h2>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h6 mb-0">Obiettivi del cliente</h2>
+          <%= link_to "Nuovo obiettivo", new_customer_customer_objective_path(@customer), class: "btn btn-sm btn-outline-primary" %>
+        </div>
         <% if @customer.customer_objectives.any? %>
           <ul class="list-group list-group-flush">
             <% @customer.customer_objectives.order(created_at: :desc).each do |obj| %>
@@ -512,9 +521,6 @@
         <% else %>
           <p class="text-muted mb-0">Nessun obiettivo registrato.</p>
         <% end %>
-        <div class="small text-muted mt-3">
-          RFA previsto promotore: <strong><%= number_to_currency(@customer.user.rfa_expected) %></strong>
-        </div>
       </div>
     </div>
   </div>
@@ -522,7 +528,10 @@
   <div class="col-12 col-lg-6">
     <div class="card shadow-sm h-100">
       <div class="card-body">
-        <h2 class="h6">Telefonate</h2>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h6 mb-0">Telefonate</h2>
+          <%= link_to "Nuova telefonata", new_customer_contact_call_path(@customer), class: "btn btn-sm btn-outline-primary" %>
+        </div>
         <% if @contact_calls.any? %>
           <ul class="list-group list-group-flush">
             <% @contact_calls.limit(10).each do |call| %>
