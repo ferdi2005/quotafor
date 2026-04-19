@@ -13,6 +13,40 @@ class RecurringActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "index disattiva le attività scadute e le mostra in fondo" do
+    future_activity = RecurringActivity.create!(
+      user: @user,
+      topic: "Futura",
+      weekday: :monday,
+      periodicity: :weekly,
+      end_date: Date.current + 14.days,
+      starts_at: Time.current.change(hour: 9, min: 0),
+      ends_at: Time.current.change(hour: 10, min: 0),
+      active: true
+    )
+
+    expired_activity = RecurringActivity.create!(
+      user: @user,
+      topic: "Passata",
+      weekday: :monday,
+      periodicity: :weekly,
+      end_date: Date.current - 1.day,
+      starts_at: Time.current.change(hour: 11, min: 0),
+      ends_at: Time.current.change(hour: 12, min: 0),
+      active: true
+    )
+
+    get recurring_activities_url
+
+    assert_response :success
+    assert_not expired_activity.reload.active?
+    assert future_activity.reload.active?
+
+    assert_operator response.body.index("Futura"), :<, response.body.index("Passata")
+    assert_includes response.body, "table-secondary"
+    assert_includes response.body, "Scaduta"
+  end
+
   test "should get new" do
     get new_recurring_activity_url
     assert_response :success
@@ -32,6 +66,7 @@ class RecurringActivitiesControllerTest < ActionDispatch::IntegrationTest
           topic: "study",
           weekday: "monday",
           periodicity: "weekly",
+          end_date: Date.current + 14.days,
           starts_at: Time.current.change(hour: 9, min: 0),
           ends_at: Time.current.change(hour: 10, min: 0),
           active: false
@@ -39,6 +74,7 @@ class RecurringActivitiesControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to recurring_activities_path
+    assert_equal Date.current + 14.days, RecurringActivity.last.end_date
   end
 
   test "POST create attività singola con data crea attività e redirect" do
@@ -81,6 +117,7 @@ class RecurringActivitiesControllerTest < ActionDispatch::IntegrationTest
         topic: @activity.topic,
         weekday: @activity.weekday,
         periodicity: @activity.periodicity,
+        end_date: Date.current + 21.days,
         starts_at: Time.current.change(hour: 9, min: 0),
         ends_at: Time.current.change(hour: 10, min: 0),
         notes: "Note aggiornate",
@@ -89,6 +126,7 @@ class RecurringActivitiesControllerTest < ActionDispatch::IntegrationTest
     }
     assert_redirected_to recurring_activities_path
     assert_equal "Note aggiornate", @activity.reload.notes
+    assert_equal Date.current + 21.days, @activity.end_date
   end
 
   # ---- DELETE destroy ----

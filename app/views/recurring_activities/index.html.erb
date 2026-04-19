@@ -21,6 +21,7 @@
                 <th>Argomento</th>
                 <th>Tipo</th>
                 <th>Data/Giorno</th>
+                <th>Fine</th>
                 <th>Orario</th>
                 <th>Luogo</th>
                 <th>Stato</th>
@@ -30,7 +31,7 @@
             <tbody>
               <% if @recurring_activities.any? %>
                 <% @recurring_activities.each do |activity| %>
-                  <tr>
+                  <tr class="<%= activity.active? ? '' : 'table-secondary text-muted' %>">
                     <td><%= activity.topic %></td>
                     <td><%= enum_t(activity, :periodicity) %></td>
                     <td>
@@ -40,11 +41,14 @@
                         <%= enum_t(activity, :weekday) %>
                       <% end %>
                     </td>
+                    <td><%= activity.end_date ? l(activity.end_date) : "-" %></td>
                     <td><%= activity.starts_at.strftime("%H:%M") %> – <%= activity.ends_at.strftime("%H:%M") %></td>
                     <td><%= activity.location.presence || "-" %></td>
                     <td>
                       <% if activity.active? %>
                         <span class="badge bg-success">Attiva</span>
+                      <% elsif activity.expired? %>
+                        <span class="badge bg-secondary">Scaduta</span>
                       <% else %>
                         <span class="badge bg-secondary">Inattiva</span>
                       <% end %>
@@ -59,7 +63,7 @@
                 <% end %>
               <% else %>
                 <tr>
-                  <td colspan="7" class="text-center text-muted py-4">Nessuna attività configurata.</td>
+                  <td colspan="8" class="text-center text-muted py-4">Nessuna attività configurata.</td>
                 </tr>
               <% end %>
             </tbody>

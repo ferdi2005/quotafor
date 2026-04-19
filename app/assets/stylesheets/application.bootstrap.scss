@@ -1,2 +1,18 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
+
+@media print {
+	.no-print,
+	.d-print-none {
+		display: none !important;
+	}
+
+	.card {
+		box-shadow: none !important;
+	}
+
+	a {
+		color: inherit !important;
+		text-decoration: none !important;
+	}
+}

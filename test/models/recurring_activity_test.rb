@@ -13,6 +13,7 @@ class RecurringActivityTest < ActiveSupport::TestCase
       topic: "Studio",
       weekday: :monday,
       periodicity: :weekly,
+      end_date: Date.current + 30.days,
       starts_at: Time.current.change(hour: 9, min: 0),
       ends_at: Time.current.change(hour: 10, min: 0),
       active: true
@@ -32,6 +33,26 @@ class RecurringActivityTest < ActiveSupport::TestCase
     )
 
     assert ra.valid?
+  end
+
+  test "expired recurring activity can be detected and deactivated" do
+    ra = RecurringActivity.create!(
+      user: @user,
+      topic: "Studio",
+      weekday: :monday,
+      periodicity: :weekly,
+      end_date: Date.current - 1.day,
+      starts_at: Time.current.change(hour: 9, min: 0),
+      ends_at: Time.current.change(hour: 10, min: 0),
+      active: true
+    )
+
+    assert ra.expired?
+    assert_predicate ra, :active?
+
+    ra.deactivate_if_expired!
+
+    assert_not ra.reload.active?
   end
 
   test "requires starts_at" do
@@ -76,11 +97,30 @@ class RecurringActivityTest < ActiveSupport::TestCase
       topic: "Studio",
       weekday: :monday,
       periodicity: :weekly,
+      end_date: Date.current + 30.days,
       starts_at: Time.current.change(hour: 9, min: 0),
       ends_at: Time.current.change(hour: 10, min: 0),
       active: true
     )
     assert CalendarEvent.count > before, "Doveva creare almeno un CalendarEvent"
+  end
+
+  test "le attività ricorrenti si fermano alla data di fine" do
+    end_date = Date.current + 3.days
+
+    ra = RecurringActivity.create!(
+      user: @user,
+      topic: "Studio",
+      weekday: :monday,
+      periodicity: :daily,
+      end_date: end_date,
+      starts_at: Time.current.change(hour: 9, min: 0),
+      ends_at: Time.current.change(hour: 10, min: 0),
+      active: true
+    )
+
+    assert_equal 4, ra.calendar_events.count
+    assert_operator ra.calendar_events.maximum(:starts_at).to_date, :<=, end_date
   end
 
   test "attività non attiva non genera eventi" do

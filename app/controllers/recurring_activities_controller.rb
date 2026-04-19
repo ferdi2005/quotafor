@@ -3,7 +3,8 @@ class RecurringActivitiesController < ApplicationController
   before_action :set_recurring_activity, only: %i[edit update destroy]
 
   def index
-    @recurring_activities = current_user.recurring_activities.order(:periodicity, :activity_date, :weekday, :starts_at)
+    deactivate_expired_recurring_activities
+    @recurring_activities = current_user.recurring_activities.ordered_for_index
   end
 
   def new
@@ -41,6 +42,10 @@ class RecurringActivitiesController < ApplicationController
   end
 
   def recurring_activity_params
-    params.require(:recurring_activity).permit(:topic, :periodicity, :activity_date, :weekday, :starts_at, :ends_at, :location, :notes, :active)
+    params.require(:recurring_activity).permit(:topic, :periodicity, :activity_date, :end_date, :weekday, :starts_at, :ends_at, :location, :notes, :active)
+  end
+
+  def deactivate_expired_recurring_activities
+    current_user.recurring_activities.where(active: true).find_each(&:deactivate_if_expired!)
   end
 end

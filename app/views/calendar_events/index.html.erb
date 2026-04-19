@@ -3,6 +3,15 @@
   "recurring_activity"   => "bg-warning text-dark",
   "assistance"           => "bg-danger"
 } %>
+<% current_query = request.query_parameters %>
+<% range_defaults = {
+  "day" => [ Date.current, Date.current ],
+  "week" => [ Date.current.beginning_of_week, Date.current.end_of_week ],
+  "month" => [ Date.current, Date.current.end_of_month ]
+} %>
+<% default_from, default_to = range_defaults.fetch(@range) %>
+<% range_from = @date_from || default_from %>
+<% range_to = @date_to || default_to %>
 
 <div class="row g-3">
   <div class="col-12">
@@ -12,16 +21,74 @@
           <h1 class="h4 mb-1">Calendario attività</h1>
           <p class="text-muted mb-0">Tutti gli appuntamenti cliente e attività pianificate.</p>
         </div>
-        <div class="d-flex align-items-center gap-2 flex-wrap">
+        <div class="d-flex align-items-center gap-2 flex-wrap no-print">
           <div class="btn-group" role="group">
-            <%= link_to "Vista lista", calendar_events_path(view: "list"),
+            <%= link_to "Vista lista", calendar_events_path(current_query.merge("view" => "list")),
                   class: "btn btn-sm #{params[:view] != 'daily' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
-            <%= link_to "Vista giornaliera", calendar_events_path(view: "daily"),
+            <%= link_to "Vista giornaliera", calendar_events_path(current_query.merge("view" => "daily")),
                   class: "btn btn-sm #{params[:view] == 'daily' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
           </div>
+          <button type="button" class="btn btn-outline-dark btn-sm" onclick="window.print()">Stampa</button>
           <%= link_to "Iscriviti con Calendario", @subscription_url, class: "btn btn-primary btn-sm" %>
           <%= link_to "Apri feed ICS", @feed_url, class: "btn btn-outline-primary btn-sm" %>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="card shadow-sm no-print">
+      <div class="card-body">
+        <%= form_with url: calendar_events_path, method: :get, local: true, class: "row g-2 align-items-end" do %>
+          <div class="col-12 col-md-3">
+            <label class="form-label mb-1">Periodo</label>
+            <div class="btn-group w-100" role="group" aria-label="Filtro periodo">
+              <%= link_to "Giorno", calendar_events_path(current_query.merge("range" => "day", "date_from" => Date.current.to_s, "date_to" => Date.current.to_s)),
+                    class: "btn btn-sm #{@range == 'day' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+              <%= link_to "Settimana", calendar_events_path(current_query.merge("range" => "week", "date_from" => Date.current.beginning_of_week.to_s, "date_to" => Date.current.end_of_week.to_s)),
+                    class: "btn btn-sm #{@range == 'week' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+              <%= link_to "Mese", calendar_events_path(current_query.merge("range" => "month", "date_from" => Date.current.to_s, "date_to" => Date.current.end_of_month.to_s)),
+                    class: "btn btn-sm #{@range == 'month' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <%= label_tag :date_from, "A partire da", class: "form-label mb-1" %>
+            <%= date_field_tag :date_from, range_from, class: "form-control" %>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <%= label_tag :date_to, "Fino a", class: "form-label mb-1" %>
+            <%= date_field_tag :date_to, range_to, class: "form-control" %>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <%= label_tag :kind, "Contenuto", class: "form-label mb-1" %>
+            <%= select_tag :kind,
+                  options_for_select([
+                    ["Tutti", "all"],
+                    ["Solo attività di dati clienti", "customer_data"],
+                    ["Solo attività", "activities"],
+                    ["Solo appuntamenti", "appointments"]
+                  ], @kind),
+                  class: "form-select" %>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <%= label_tag :appointment_type, "Tipo appuntamento", class: "form-label mb-1" %>
+            <%= select_tag :appointment_type,
+                  options_for_select([["Tutti i tipi", ""]] + enum_options(Appointment, :appointment_type), params[:appointment_type]),
+                  class: "form-select",
+                  disabled: @kind != "appointments" %>
+          </div>
+
+          <div class="col-12 d-flex gap-2">
+            <%= hidden_field_tag :range, @range %>
+            <%= hidden_field_tag :view, params[:view] if params[:view].present? %>
+            <%= button_tag "Applica filtri", class: "btn btn-primary" %>
+            <%= link_to "Reset", calendar_events_path(view: params[:view]), class: "btn btn-outline-secondary" %>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
@@ -47,7 +114,7 @@
                   </div>
                   <% if event.customer %>
                     <%= link_to "Vai al cliente", customer_path(event.customer),
-                          class: "btn btn-sm btn-outline-primary text-nowrap" %>
+                          class: "btn btn-sm btn-outline-primary text-nowrap d-print-none" %>
                   <% end %>
                 </li>
               <% end %>
@@ -87,7 +154,8 @@
                       </td>
                       <td>
                         <% if event.customer %>
-                          <%= link_to event.customer.full_name, customer_path(event.customer) %>
+                          <%= link_to event.customer.full_name, customer_path(event.customer), class: "d-print-none" %>
+                          <span class="d-none d-print-inline"><%= event.customer.full_name %></span>
                         <% else %>
                           -
                         <% end %>

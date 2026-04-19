@@ -63,6 +63,7 @@ Crea un file `.env` nella root del progetto (ignorato da git):
 | `SECRET_KEY_BASE`| Chiave segreta Rails               | *(output di `rails secret`)* |
 | `SENTRY_DSN`     | DSN Sentry per error tracking      | `https://...@sentry.io/` |
 | `REDIS_URL`      | URL REDIS                          |                          |
+| `PRIVACY`        | Se `true` nasconde dati sensibili non consentiti nelle viste cliente | `true` |
 | MAILER_SENDER | eventuale mittente personalizzato | |
 | QUOTAFOR_DATABASE_PASSWORD | db pwd | |w
 ## Feed ICS (Calendario)

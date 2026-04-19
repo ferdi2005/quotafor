@@ -18,7 +18,20 @@ class RecurringActivity < ApplicationRecord
   validates :weekday, presence: true, unless: :one_time?
   validate :end_after_start
 
+  scope :ordered_for_index, -> { order(active: :desc, periodicity: :asc, activity_date: :asc, weekday: :asc, starts_at: :asc) }
+
   after_commit :sync_calendar_events, on: %i[create update]
+
+  def expired?
+    cutoff_date = one_time? ? activity_date : end_date
+    cutoff_date.present? && cutoff_date < Time.zone.today
+  end
+
+  def deactivate_if_expired!
+    return unless active? && expired?
+
+    update!(active: false)
+  end
 
   private
 
@@ -58,7 +71,7 @@ class RecurringActivity < ApplicationRecord
     return [ activity_date ] if one_time?
 
     today = Time.zone.today
-    horizon = today + 60.days
+    horizon = end_date.presence || today + 60.days
 
     case periodicity
     when "daily"

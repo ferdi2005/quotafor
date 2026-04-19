@@ -1,3 +1,5 @@
+<% privacy_mode = privacy_mode_enabled? && customer.persisted? %>
+
 <%= form_with model: customer, local: true do |f| %>
   <% if customer.errors.any? %>
     <div class="alert alert-danger mb-4">
@@ -21,6 +23,7 @@
           <%= f.label :last_name, "Cognome", class: "form-label" %>
           <%= f.text_field :last_name, class: "form-control" %>
         </div>
+        <% unless privacy_mode %>
         <div class="col-12 col-md-4">
           <%= f.label :birth_date, "Data di nascita", class: "form-label" %>
           <%= f.text_field :birth_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
@@ -37,6 +40,7 @@
           <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
           <%= f.text_field :relationship_started_on, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
         </div>
+        <% end %>
         <div class="col-12 col-md-8">
           <%= f.label :referred_by_customer_id, "Referenziato da", class: "form-label" %>
           <%= f.select :referred_by_customer_id,
@@ -70,6 +74,7 @@
           <%= f.label :email, "Email", class: "form-label" %>
           <%= f.email_field :email, class: "form-control" %>
         </div>
+        <% unless privacy_mode %>
         <div class="col-12 col-md-4">
           <%= f.label :customer_type, "Tipo cliente", class: "form-label" %>
           <%= f.select :customer_type,
@@ -102,10 +107,12 @@
           <%= f.label :personal_summary, "Sintesi colloquio", class: "form-label" %>
           <%= f.text_area :personal_summary, class: "form-control", rows: 3 %>
         </div>
+        <% end %>
       </div>
     </div>
   </div>
 
+  <% unless privacy_mode %>
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h2 class="h5 mb-3">Moglie</h2>
@@ -274,6 +281,7 @@
       <%= render "property_fields", property_form: property_form %>
     <% end %>
   </template>
+  <% end %>
 
   <div class="d-flex gap-2 mt-4">
     <%= f.submit class: "btn btn-primary" %>

@@ -20,20 +20,25 @@
       <%= f.select :periodicity,
             options_for_select(enum_options(RecurringActivity, :periodicity), recurring_activity.periodicity),
             {},
-            class: "form-select" %>
+            class: "form-select", id: "recurring_activity_periodicity" %>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-3" id="recurring-activity-date-field">
       <%= f.label :activity_date, "Data", class: "form-label" %>
-      <%= f.date_field :activity_date, class: "form-control" %>
+      <%= f.date_field :activity_date, class: "form-control", id: "recurring_activity_activity_date" %>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-3" id="recurring-end-date-field">
+      <%= f.label :end_date, "Fine ripetizione", class: "form-label" %>
+      <%= f.date_field :end_date, class: "form-control", id: "recurring_activity_end_date" %>
+    </div>
+
+    <div class="col-md-3" id="recurring-weekday-field">
       <%= f.label :weekday, "Giorno", class: "form-label" %>
       <%= f.select :weekday,
             options_for_select(enum_options(RecurringActivity, :weekday), recurring_activity.weekday),
             {},
-            class: "form-select" %>
+            class: "form-select", id: "recurring_activity_weekday" %>
     </div>
 
     <div class="col-md-3">
@@ -53,7 +58,7 @@
 
     <div class="col-12">
       <div class="alert alert-info mb-0">
-        Usa la <strong>data</strong> per le attività singole e il <strong>giorno della settimana</strong> per quelle ricorrenti.
+        Usa la <strong>data</strong> per le attività singole, il <strong>giorno della settimana</strong> per quelle settimanali e la <strong>data fine</strong> per limitarne la durata.
       </div>
     </div>
 
@@ -75,3 +80,33 @@
     </div>
   </div>
 <% end %>
+
+<script>
+(function () {
+  var periodicitySelect = document.getElementById('recurring_activity_periodicity');
+  var activityDateField = document.getElementById('recurring-activity-date-field');
+  var weekdayField = document.getElementById('recurring-weekday-field');
+  var endDateField = document.getElementById('recurring-end-date-field');
+  var activityDateInput = document.getElementById('recurring_activity_activity_date');
+  var weekdayInput = document.getElementById('recurring_activity_weekday');
+
+  if (!periodicitySelect || !activityDateField || !weekdayField || !endDateField || !activityDateInput || !weekdayInput) {
+    return;
+  }
+
+  function toggleVisibility() {
+    var isOneTime = periodicitySelect.value === 'one_time';
+    var isWeekly = periodicitySelect.value === 'weekly';
+
+    activityDateField.classList.toggle('d-none', !isOneTime);
+    weekdayField.classList.toggle('d-none', !isWeekly);
+    endDateField.classList.toggle('d-none', isOneTime);
+
+    activityDateInput.required = isOneTime;
+    weekdayInput.required = isWeekly;
+  }
+
+  periodicitySelect.addEventListener('change', toggleVisibility);
+  toggleVisibility();
+})();
+</script>

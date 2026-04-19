@@ -80,6 +80,19 @@ class CustomersController < ApplicationController
   end
 
   def customer_params
+    if privacy_mode_enabled? && @customer&.persisted?
+      permitted = params.require(:customer).permit(
+        :first_name,
+        :last_name,
+        :phone,
+        :email,
+        :referred_by_customer_id
+      )
+
+      permitted[:referred_by_customer_id] = normalized_referred_by_customer_id(permitted[:referred_by_customer_id])
+      return permitted
+    end
+
     permitted = params.require(:customer).permit(
       :first_name,
       :last_name,
@@ -141,6 +154,10 @@ class CustomersController < ApplicationController
 
     permitted[:referred_by_customer_id] = normalized_referred_by_customer_id(permitted[:referred_by_customer_id])
     permitted
+  end
+
+  def privacy_mode_enabled?
+    ActiveModel::Type::Boolean.new.cast(ENV.fetch("PRIVACY", false))
   end
 
   def referrer_label(customer)

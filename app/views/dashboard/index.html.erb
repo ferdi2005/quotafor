@@ -1,3 +1,5 @@
+<% privacy_mode = privacy_mode_enabled? %>
+
 <div class="row g-3 mb-3">
   <div class="col-12">
     <div class="card shadow-sm">
@@ -5,7 +7,7 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
           <div>
             <h1 class="h4 mb-1">Dashboard clienti</h1>
-            <p class="text-muted mb-0">Ricerca combinabile su nome, età, professione, data inizio, tipo cliente e prossimo appuntamento.</p>
+            <p class="text-muted mb-0">Ricerca combinabile su nome, data inizio, tipo cliente e prossimo appuntamento.</p>
           </div>
           <%= link_to "Nuovo cliente", new_customer_path, class: "btn btn-primary" %>
         </div>
@@ -14,24 +16,26 @@
   </div>
 </div>
 
-<div class="row g-3 mb-3">
-  <div class="col-md-6">
-    <div class="card shadow-sm h-100">
-      <div class="card-body">
-        <p class="text-muted mb-1">Numero contratti</p>
-        <p class="h3 mb-0"><%= @contracts_count %></p>
+<% unless privacy_mode %>
+  <div class="row g-3 mb-3">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted mb-1">Numero contratti</p>
+          <p class="h3 mb-0"><%= @contracts_count %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted mb-1">RFA totale</p>
+          <p class="h3 mb-0"><%= number_to_currency(@rfa_total) %></p>
+        </div>
       </div>
     </div>
   </div>
-  <div class="col-md-6">
-    <div class="card shadow-sm h-100">
-      <div class="card-body">
-        <p class="text-muted mb-1">RFA totale</p>
-        <p class="h3 mb-0"><%= number_to_currency(@rfa_total) %></p>
-      </div>
-    </div>
-  </div>
-</div>
+<% end %>
 
 <div class="row g-3 mb-3">
   <div class="col-12">
@@ -43,14 +47,16 @@
               <%= f.label :full_name, "Nome o cognome", class: "form-label" %>
               <%= f.text_field :full_name, value: @filters[:full_name], class: "form-control" %>
             </div>
-            <div class="col-md-2">
-              <%= f.label :age, "Età", class: "form-label" %>
-              <%= f.number_field :age, value: @filters[:age], class: "form-control", min: 18 %>
-            </div>
-            <div class="col-md-3">
-              <%= f.label :profession, "Professione", class: "form-label" %>
-              <%= f.text_field :profession, value: @filters[:profession], class: "form-control" %>
-            </div>
+            <% unless privacy_mode %>
+              <div class="col-md-2">
+                <%= f.label :age, "Età", class: "form-label" %>
+                <%= f.number_field :age, value: @filters[:age], class: "form-control", min: 18 %>
+              </div>
+              <div class="col-md-3">
+                <%= f.label :profession, "Professione", class: "form-label" %>
+                <%= f.text_field :profession, value: @filters[:profession], class: "form-control" %>
+              </div>
+            <% end %>
             <div class="col-md-3">
               <%= f.label :relationship_started_on, "Data inizio rapporto", class: "form-label" %>
               <%= f.date_field :relationship_started_on, value: @filters[:relationship_started_on], class: "form-control" %>
@@ -86,12 +92,16 @@
             <thead class="table-light">
               <tr>
                 <th>Nome</th>
-                <th>Età</th>
-                <th>Professione</th>
+                <% unless privacy_mode %>
+                  <th>Età</th>
+                  <th>Professione</th>
+                <% end %>
                 <th>Data inizio</th>
                 <th>Tipo</th>
-                <th>Contratti</th>
-                <th>RFA cliente</th>
+                <% unless privacy_mode %>
+                  <th>Contratti</th>
+                  <th>RFA cliente</th>
+                <% end %>
                 <th>Prossimo appuntamento</th>
               </tr>
             </thead>
@@ -103,18 +113,22 @@
                   <% customer_rfa = customer.investments.select(&:with_me?).sum { |investment| investment.amount.to_d } %>
                   <tr>
                     <td><%= link_to customer.full_name, customer_path(customer), class: "fw-semibold text-decoration-none" %></td>
-                    <td><%= customer.age || "-" %></td>
-                    <td><%= customer.profession.presence || "-" %></td>
+                    <% unless privacy_mode %>
+                      <td><%= customer.age || "-" %></td>
+                      <td><%= customer.profession.presence || "-" %></td>
+                    <% end %>
                     <td><%= l(customer.relationship_started_on) %></td>
                     <td><%= enum_t(customer, :customer_type) %></td>
-                    <td><%= link_to contracts_count, customer_path(customer), class: "text-decoration-none fw-semibold" %></td>
-                    <td><%= number_to_currency(customer_rfa) %></td>
+                    <% unless privacy_mode %>
+                      <td><%= link_to contracts_count, customer_path(customer), class: "text-decoration-none fw-semibold" %></td>
+                      <td><%= number_to_currency(customer_rfa) %></td>
+                    <% end %>
                     <td><%= next_appointment ? l(next_appointment.starts_at, format: :short) : "-" %></td>
                   </tr>
                 <% end %>
               <% else %>
                 <tr>
-                  <td colspan="8" class="text-center text-muted py-4">Nessun cliente trovato con i filtri selezionati.</td>
+                  <td colspan="<%= privacy_mode ? 4 : 8 %>" class="text-center text-muted py-4">Nessun cliente trovato con i filtri selezionati.</td>
                 </tr>
               <% end %>
             </tbody>

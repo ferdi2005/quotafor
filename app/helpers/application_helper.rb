@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def privacy_mode_enabled?
+    ActiveModel::Type::Boolean.new.cast(ENV.fetch("PRIVACY", false))
+  end
+
   # Traduce il valore di un enum in italiano
   # es: enum_t(appointment, :appointment_type) => "Primo incontro"
   def enum_t(record, field)
