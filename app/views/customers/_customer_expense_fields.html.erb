@@ -1,0 +1,25 @@
+<div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+  <%= expense_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= expense_form.label :expense_type, "Tipo spesa", class: "form-label" %>
+    <%= expense_form.text_field :expense_type, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-3 col-lg-2">
+    <%= expense_form.label :amount, "Importo", class: "form-label" %>
+    <%= expense_form.number_field :amount, step: :any, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= expense_form.label :category, "Categoria", class: "form-label" %>
+    <%= expense_form.select :category,
+                             options_for_select(enum_options(CustomerExpense, :category), expense_form.object.category),
+                             { include_blank: "Seleziona..." },
+                             class: "form-select" %>
+  </div>
+  <div class="col-12 col-md-6 col-lg-4">
+    <%= expense_form.label :description, "Descrizione", class: "form-label" %>
+    <%= expense_form.text_field :description, class: "form-control" %>
+  </div>
+  <div class="col-12 d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+  </div>
+</div>

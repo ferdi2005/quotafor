@@ -1,0 +1,52 @@
+<% with_me = local_assigns.fetch(:with_me, false) %>
+<% show_active = local_assigns.fetch(:show_active, false) %>
+
+<div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+  <%= investment_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+  <%= investment_form.hidden_field :with_me, value: with_me %>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= investment_form.label :product_name, "Nome prodotto", class: "form-label" %>
+    <%= investment_form.text_field :product_name, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= investment_form.label :distributed_by, "Distribuito da", class: "form-label" %>
+    <%= investment_form.text_field :distributed_by, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= investment_form.label :subscription_date, "Data sottoscrizione", class: "form-label" %>
+    <%= investment_form.text_field :subscription_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= investment_form.label :purpose, "Finalità", class: "form-label" %>
+    <%= investment_form.select :purpose,
+                               options_for_select(enum_options(Investment, :purpose), investment_form.object.purpose),
+                               { include_blank: "Seleziona..." },
+                               class: "form-select" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= investment_form.label :advised_by, "Chi lo ha consigliato", class: "form-label" %>
+    <%= investment_form.text_field :advised_by, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= investment_form.label :amount, "€", class: "form-label" %>
+    <%= investment_form.number_field :amount, step: :any, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= investment_form.label :satisfaction_level, "Livello soddisfazione", class: "form-label" %>
+    <%= investment_form.select :satisfaction_level,
+                               options_for_select((1..10).to_a, investment_form.object.satisfaction_level),
+                               { include_blank: "Seleziona..." },
+                               class: "form-select" %>
+  </div>
+  <% if show_active %>
+    <div class="col-12 col-md-4 col-lg-2 d-flex align-items-end">
+      <div class="form-check">
+        <%= investment_form.check_box :active, class: "form-check-input" %>
+        <%= investment_form.label :active, "Attivo", class: "form-check-label" %>
+      </div>
+    </div>
+  <% end %>
+  <div class="col-12 d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+  <%= property_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+  <div class="col-12 col-md-4 col-lg-3">
+    <%= property_form.label :purpose, "Finalità", class: "form-label" %>
+    <%= property_form.select :purpose,
+                             options_for_select(enum_options(Property, :purpose), property_form.object.purpose),
+                             { include_blank: "Seleziona..." },
+                             class: "form-select",
+                             data: { property_purpose_select: true } %>
+  </div>
+  <div class="col-12 col-md-8 col-lg-7">
+    <%= property_form.label :address, "Indirizzo", class: "form-label" %>
+    <%= property_form.text_field :address, class: "form-control" %>
+  </div>
+  <div class="row g-3 <%= "d-none" unless property_form.object.instrumental? %>" data-property-instrumental-fields>
+    <div class="col-12 col-md-4">
+      <%= property_form.label :annual_income, "Reddito annuo generato (€)", class: "form-label" %>
+      <%= property_form.number_field :annual_income, step: :any, class: "form-control" %>
+    </div>
+    <div class="col-12 col-md-4">
+      <%= property_form.label :annual_maintenance_cost, "Costi annui di mantenimento (€)", class: "form-label" %>
+      <%= property_form.number_field :annual_maintenance_cost, step: :any, class: "form-control" %>
+    </div>
+    <div class="col-12 col-md-4">
+      <%= property_form.label :commercial_value, "Valore commerciale (€)", class: "form-label" %>
+      <%= property_form.number_field :commercial_value, step: :any, class: "form-control" %>
+    </div>
+  </div>
+  <div class="col-12 d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+  </div>
+</div>

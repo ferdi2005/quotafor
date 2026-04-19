@@ -1,0 +1,44 @@
+<div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+  <%= insurance_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= insurance_form.label :reason, "Motivo", class: "form-label" %>
+    <%= insurance_form.select :reason,
+                              options_for_select(enum_options(Insurance, :reason), insurance_form.object.reason),
+                              { include_blank: "Seleziona..." },
+                              class: "form-select" %>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= insurance_form.label :product_name, "Nome prodotto", class: "form-label" %>
+    <%= insurance_form.text_field :product_name, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= insurance_form.label :company_name, "Compagnia", class: "form-label" %>
+    <%= insurance_form.text_field :company_name, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= insurance_form.label :investment_frequency, "Importo investito", class: "form-label" %>
+    <%= insurance_form.select :investment_frequency,
+                              options_for_select(enum_options(Insurance, :investment_frequency), insurance_form.object.investment_frequency),
+                              { include_blank: "Periodicità..." },
+                              class: "form-select" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= insurance_form.label :amount, "€", class: "form-label" %>
+    <%= insurance_form.number_field :amount, step: :any, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= insurance_form.label :objective, "Obiettivo (rendita/capitale)", class: "form-label" %>
+    <%= insurance_form.number_field :objective, step: :any, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= insurance_form.label :subscription_date, "Data sottoscrizione", class: "form-label" %>
+    <%= insurance_form.text_field :subscription_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= insurance_form.label :expiry_date, "Data scadenza", class: "form-label" %>
+    <%= insurance_form.text_field :expiry_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+  </div>
+  <div class="col-12 d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+  </div>
+</div>

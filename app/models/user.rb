@@ -9,6 +9,7 @@ class User < ApplicationRecord
 
   has_many :customers, dependent: :destroy
   has_many :customer_objectives, through: :customers
+  has_many :investments, through: :customers
   has_many :appointments, dependent: :destroy
   has_many :contact_calls, dependent: :destroy
   has_many :recurring_activities, dependent: :destroy
@@ -35,7 +36,7 @@ class User < ApplicationRecord
   end
 
   def refresh_rfa_expected!
-    update!(rfa_expected: customer_objectives.sum(Arel.sql("COALESCE(invested_resources, 0) - COALESCE(diminished_resources, 0)")))
+    update!(rfa_expected: investments.where(with_me: true).sum(:amount))
   end
 
   private

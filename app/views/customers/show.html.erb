@@ -257,11 +257,14 @@
     </div>
   <% end %>
 
-  <% if @customer.investments.any? %>
+  <% investments_with_others = @customer.investments_with_others %>
+  <% investments_with_me = @customer.investments_with_me %>
+
+  <% if investments_with_others.any? %>
     <div class="col-12">
       <div class="card shadow-sm">
         <div class="card-body">
-          <h2 class="h6">Investimenti</h2>
+          <h2 class="h6">Investimenti con altri</h2>
           <div class="table-responsive">
             <table class="table table-sm mb-0">
               <thead>
@@ -276,7 +279,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @customer.investments.each do |investment| %>
+                <% investments_with_others.each do |investment| %>
                   <tr>
                     <td><small><%= investment.product_name.presence || "-" %></small></td>
                     <td><small><%= investment.distributed_by.presence || "-" %></small></td>
@@ -285,6 +288,50 @@
                     <td><small><%= investment.advised_by.presence || "-" %></small></td>
                     <td><%= investment.amount.present? ? number_to_currency(investment.amount) : "-" %></td>
                     <td><%= investment.satisfaction_level.present? ? "#{investment.satisfaction_level}/10" : "-" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if investments_with_me.any? %>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Investimenti con me</h2>
+          <div class="table-responsive">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Nome prodotto</th>
+                  <th>Distribuito da</th>
+                  <th>Data sottoscrizione</th>
+                  <th>Finalità</th>
+                  <th>Chi lo ha consigliato</th>
+                  <th>Importo</th>
+                  <th>Soddisfazione</th>
+                  <th>Stato</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% investments_with_me.each do |investment| %>
+                  <tr>
+                    <td><small><%= investment.product_name.presence || "-" %></small></td>
+                    <td><small><%= investment.distributed_by.presence || "-" %></small></td>
+                    <td><small><%= investment.subscription_date.present? ? l(investment.subscription_date) : "-" %></small></td>
+                    <td><small><%= investment.purpose.present? ? enum_t(investment, :purpose) : "-" %></small></td>
+                    <td><small><%= investment.advised_by.presence || "-" %></small></td>
+                    <td><%= investment.amount.present? ? number_to_currency(investment.amount) : "-" %></td>
+                    <td><%= investment.satisfaction_level.present? ? "#{investment.satisfaction_level}/10" : "-" %></td>
+                    <td>
+                      <span class="badge <%= investment.active? ? 'bg-success' : 'bg-secondary' %>">
+                        <%= investment.active? ? "Attivo" : "Disattivato" %>
+                      </span>
+                    </td>
                   </tr>
                 <% end %>
               </tbody>
@@ -447,8 +494,6 @@
                     <div class="small"><%= obj.description.presence || "" %></div>
                     <div class="small text-muted">
                       Risorse necessarie: <%= obj.resources.presence || "-" %>
-                      | Investite: <%= obj.invested_resources.present? ? number_to_currency(obj.invested_resources) : "-" %>
-                      | Diminuite: <%= obj.diminished_resources.present? ? number_to_currency(obj.diminished_resources) : "-" %>
                     </div>
                   </div>
                   <div class="d-flex flex-wrap align-items-start gap-1 flex-shrink-0">

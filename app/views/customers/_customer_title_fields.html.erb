@@ -1,0 +1,26 @@
+<div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+  <%= title_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= title_form.label :title_type, "Tipo", class: "form-label" %>
+    <%= title_form.text_field :title_type, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= title_form.label :isin, "ISIN", class: "form-label" %>
+    <%= title_form.text_field :isin, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= title_form.label :initial_capital, "Capitale iniziale", class: "form-label" %>
+    <%= title_form.number_field :initial_capital, step: :any, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= title_form.label :expires_on, "Scadenza", class: "form-label" %>
+    <%= title_form.text_field :expires_on, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= title_form.label :rendimento, "Rendimento", class: "form-label" %>
+    <%= title_form.number_field :rendimento, step: :any, class: "form-control" %>
+  </div>
+  <div class="col-12 d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+  </div>
+</div>

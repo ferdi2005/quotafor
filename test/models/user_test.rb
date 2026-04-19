@@ -35,25 +35,32 @@ class UserTest < ActiveSupport::TestCase
     assert @user.errors[:time_zone].present?
   end
 
-  test "refresh_rfa_expected! sums objective resource deltas" do
+  test "refresh_rfa_expected! sums only investments with me" do
     customer = customers(:one)
 
-    customer.customer_objectives.create!(
-      title: "Obiettivo A",
-      active: true,
-      invested_resources: 120,
-      diminished_resources: 20
+    customer.investments.create!(
+      product_name: "Fondo A",
+      with_me: true,
+      amount: 120,
+      active: true
     )
 
-    customer.customer_objectives.create!(
-      title: "Obiettivo B",
-      active: true,
-      invested_resources: 15,
-      diminished_resources: 10
+    customer.investments.create!(
+      product_name: "Fondo B",
+      with_me: true,
+      amount: 15,
+      active: false
+    )
+
+    customer.investments.create!(
+      product_name: "Fondo C",
+      with_me: false,
+      amount: 1_000,
+      active: true
     )
 
     @user.refresh_rfa_expected!
 
-    assert_equal BigDecimal("105.0"), @user.reload.rfa_expected
+    assert_equal BigDecimal("135.0"), @user.reload.rfa_expected
   end
 end

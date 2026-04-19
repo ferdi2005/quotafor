@@ -28,4 +28,8 @@ module ApplicationHelper
       "assistance" => "bg-primary"
     }.fetch(call_type.to_s, "bg-secondary")
   end
+
+  def satisfaction_level_options(selected = nil)
+    options_for_select((1..10).to_a, selected)
+  end
 end

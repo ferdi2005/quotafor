@@ -1,0 +1,37 @@
+<div class="row g-3 mb-2 p-3 border rounded bg-body-tertiary" data-nested-item>
+  <%= spouse_form.hidden_field :_destroy, value: 0, class: "nested-destroy-field" %>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= spouse_form.label :first_name, "Nome", class: "form-label" %>
+    <%= spouse_form.text_field :first_name, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-6 col-lg-3">
+    <%= spouse_form.label :last_name, "Cognome", class: "form-label" %>
+    <%= spouse_form.text_field :last_name, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= spouse_form.label :birth_date, "Data di nascita", class: "form-label" %>
+    <%= spouse_form.text_field :birth_date, class: "form-control", data: { datepicker: true }, autocomplete: "off" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= spouse_form.label :profession, "Professione", class: "form-label" %>
+    <%= spouse_form.text_field :profession, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= spouse_form.label :annual_income, "Reddito annuo", class: "form-label" %>
+    <%= spouse_form.number_field :annual_income, step: :any, class: "form-control" %>
+  </div>
+  <div class="col-12 col-md-4 col-lg-2">
+    <%= spouse_form.label :satisfaction_level, "Livello soddisfazione lavoro", class: "form-label" %>
+    <%= spouse_form.select :satisfaction_level,
+                           satisfaction_level_options(spouse_form.object.satisfaction_level),
+                           { include_blank: "Seleziona..." },
+                           class: "form-select" %>
+  </div>
+  <div class="col-12">
+    <%= spouse_form.label :prospects, "Prospettive", class: "form-label" %>
+    <%= spouse_form.text_area :prospects, class: "form-control", rows: 2 %>
+  </div>
+  <div class="col-12 d-flex justify-content-end">
+    <button type="button" class="btn btn-outline-danger btn-sm" data-remove-nested>Rimuovi</button>
+  </div>
+</div>

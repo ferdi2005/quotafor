@@ -99,15 +99,15 @@
               <% if @customers.any? %>
                 <% @customers.each do |customer| %>
                   <% next_appointment = customer.appointments.upcoming.first %>
-                  <% contracts_count = customer.customer_objectives.size %>
-                  <% customer_rfa = customer.customer_objectives.sum { |objective| objective.invested_resources.to_d - objective.diminished_resources.to_d } %>
+                  <% contracts_count = customer.contracts_count %>
+                  <% customer_rfa = customer.investments.select(&:with_me?).sum { |investment| investment.amount.to_d } %>
                   <tr>
                     <td><%= link_to customer.full_name, customer_path(customer), class: "fw-semibold text-decoration-none" %></td>
                     <td><%= customer.age || "-" %></td>
                     <td><%= customer.profession.presence || "-" %></td>
                     <td><%= l(customer.relationship_started_on) %></td>
                     <td><%= enum_t(customer, :customer_type) %></td>
-                    <td><%= link_to contracts_count, customer_path(customer, anchor: "customer-objectives"), class: "text-decoration-none fw-semibold" %></td>
+                    <td><%= link_to contracts_count, customer_path(customer), class: "text-decoration-none fw-semibold" %></td>
                     <td><%= number_to_currency(customer_rfa) %></td>
                     <td><%= next_appointment ? l(next_appointment.starts_at, format: :short) : "-" %></td>
                   </tr>

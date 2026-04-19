@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_18_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -195,6 +195,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_190000) do
   end
 
   create_table "investments", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.string "advised_by"
     t.decimal "amount"
     t.bigint "customer_id", null: false
@@ -203,6 +204,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_190000) do
     t.string "purpose"
     t.integer "satisfaction_level"
     t.date "subscription_date"
+    t.boolean "with_me", default: false, null: false
     t.index ["customer_id"], name: "index_investments_on_customer_id"
   end
 

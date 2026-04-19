@@ -14,6 +14,8 @@ class Customer < ApplicationRecord
   has_many :insurances, dependent: :destroy
   has_many :properties, dependent: :destroy
   has_many :investments, dependent: :destroy
+  has_many :investments_with_me, -> { where(with_me: true) }, class_name: "Investment"
+  has_many :investments_with_others, -> { where(with_me: false) }, class_name: "Investment"
   has_many :customer_titles, dependent: :destroy
 
   accepts_nested_attributes_for :spouses, allow_destroy: true, reject_if: :all_blank
@@ -59,5 +61,9 @@ class Customer < ApplicationRecord
 
   def savings
     total_income - total_expenses
+  end
+
+  def contracts_count
+    investments.size + (ok_current_account? ? 1 : 0)
   end
 end
