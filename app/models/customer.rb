@@ -24,7 +24,7 @@ class Customer < ApplicationRecord
   accepts_nested_attributes_for :banks, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :insurances, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :properties, allow_destroy: true, reject_if: :all_blank
-  accepts_nested_attributes_for :investments, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :investments, allow_destroy: true, reject_if: :reject_blank_investment
   accepts_nested_attributes_for :customer_titles, allow_destroy: true, reject_if: :all_blank
 
   enum :customer_type, { new_customer: 0, existing_customer: 1, previous_customer: 2 }
@@ -65,5 +65,12 @@ class Customer < ApplicationRecord
 
   def contracts_count
     investments.size + (ok_current_account? ? 1 : 0)
+  end
+
+  private
+
+  def reject_blank_investment(attributes)
+    relevant_attributes = attributes.except("id", "with_me", "active", "_destroy")
+    relevant_attributes.values.all?(&:blank?)
   end
 end

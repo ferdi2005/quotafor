@@ -49,6 +49,60 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
     assert_equal @own_customer, Customer.last.referred_by_customer
   end
 
+  test "create saves nested investments with and without advisor" do
+    assert_difference "Customer.count", 1 do
+      assert_difference "Investment.count", 2 do
+        post customers_path, params: {
+          customer: {
+            first_name: "Invest",
+            last_name: "Cliente",
+            relationship_started_on: Date.current,
+            customer_type: "new_customer",
+            investments_attributes: {
+              "0" => {
+                with_me: "false",
+                product_name: "ETF Mondo",
+                distributed_by: "Banca X",
+                amount: "10000"
+              },
+              "1" => {
+                with_me: "true",
+                active: "1",
+                product_name: "Fondo Pensione",
+                distributed_by: "Rete Y",
+                amount: "5000"
+              }
+            }
+          }
+        }
+      end
+    end
+
+    customer = Customer.last
+    assert_equal 2, customer.investments.count
+    assert_equal 1, customer.investments_with_me.count
+    assert_equal 1, customer.investments_with_others.count
+  end
+
+  test "create ignores blank nested investment rows" do
+    assert_difference "Customer.count", 1 do
+      assert_no_difference "Investment.count" do
+        post customers_path, params: {
+          customer: {
+            first_name: "Senza",
+            last_name: "Investimenti",
+            relationship_started_on: Date.current,
+            customer_type: "new_customer",
+            investments_attributes: {
+              "0" => { with_me: "false", active: "0" },
+              "1" => { with_me: "true", active: "1" }
+            }
+          }
+        }
+      end
+    end
+  end
+
   test "create ignores referred_by_customer from another user" do
     assert_difference "Customer.count", 1 do
       post customers_path, params: {

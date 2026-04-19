@@ -167,8 +167,8 @@ class CustomersController < ApplicationController
     @customer.banks.build unless @customer.banks.any?
     @customer.insurances.build unless @customer.insurances.any?
     @customer.properties.build unless @customer.properties.any?
-    @customer.investments.build(with_me: false) unless @customer.investments_with_others.any?
-    @customer.investments.build(with_me: true, active: true) unless @customer.investments_with_me.any?
+    @customer.investments_with_others.build unless @customer.investments_with_others.any?
+    @customer.investments_with_me.build(active: true) unless @customer.investments_with_me.any?
     @customer.customer_titles.build unless @customer.customer_titles.any?
   end
 
