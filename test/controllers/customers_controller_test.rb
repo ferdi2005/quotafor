@@ -14,6 +14,43 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "show limits appointments and contact calls previews to five with full list links" do
+    customer = Customer.create!(
+      user: @user,
+      first_name: "Preview",
+      last_name: "Lists",
+      relationship_started_on: Date.current,
+      customer_type: :new_customer
+    )
+
+    6.times do |index|
+      customer.appointments.create!(
+        user: @user,
+        starts_at: Time.current - index.days,
+        appointment_type: :follow_up,
+        status: :scheduled,
+        visit_feedback: "Appuntamento #{index}"
+      )
+      customer.contact_calls.create!(
+        user: @user,
+        called_at: Time.current - index.days,
+        call_type: :first_visit,
+        notes: "Telefonata #{index}"
+      )
+    end
+
+    get customer_path(customer)
+    assert_response :success
+
+    assert_select "#appointments-preview-list li.list-group-item", count: 5
+    assert_select "a[href='#all-appointments']", text: /Vedi tutti gli appuntamenti \(6\)/
+    assert_select "#all-appointments-list li.list-group-item", count: 6
+
+    assert_select "#contact-calls-preview-list li.list-group-item", count: 5
+    assert_select "a[href='#all-contact-calls']", text: /Vedi tutte le telefonate \(6\)/
+    assert_select "#all-contact-calls-list li.list-group-item", count: 6
+  end
+
   test "show other user's customer raises 404" do
     get customer_path(@other_customer)
     assert_response :not_found
