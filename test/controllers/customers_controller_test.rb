@@ -119,6 +119,30 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
     assert_nil Customer.last.referred_by_customer
   end
 
+  test "create in privacy mode uses defaults for hidden fields" do
+    original_privacy = ENV["PRIVACY"]
+    ENV["PRIVACY"] = "true"
+
+    begin
+      assert_difference "Customer.count", 1 do
+        post customers_path, params: {
+          customer: {
+            first_name: "Privacy",
+            last_name: "Mode",
+            phone: "123456789",
+            email: "privacy@example.com"
+          }
+        }
+      end
+
+      created_customer = Customer.last
+      assert_equal Date.current, created_customer.relationship_started_on
+      assert_equal "new_customer", created_customer.customer_type
+    ensure
+      ENV["PRIVACY"] = original_privacy
+    end
+  end
+
   test "referrer_suggestions returns only current user customers" do
     own_extra_customer = Customer.create!(
       user: @user,

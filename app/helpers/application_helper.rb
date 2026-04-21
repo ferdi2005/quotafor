@@ -1,5 +1,7 @@
 module ApplicationHelper
   def privacy_mode_enabled?
+    return Current.privacy_mode unless Current.privacy_mode.nil?
+
     ActiveModel::Type::Boolean.new.cast(ENV.fetch("PRIVACY", false))
   end
 

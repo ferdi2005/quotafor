@@ -41,17 +41,17 @@
     <div class="card shadow-sm no-print">
       <div class="card-body">
         <%= form_with url: calendar_events_path, method: :get, local: true, class: "row g-2 align-items-end" do %>
-          <div class="col-12 col-md-3">
+          <div class="col-12">
             <label class="form-label mb-1">Periodo</label>
-            <div class="btn-group w-100" role="group" aria-label="Filtro periodo">
+            <div class="d-flex flex-wrap gap-2" role="group" aria-label="Filtro periodo">
               <%= link_to "Giorno", calendar_events_path(current_query.merge("range" => "day", "date_from" => Date.current.to_s, "date_to" => Date.current.to_s)),
-                    class: "btn btn-sm #{@range == 'day' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+                class: "btn btn-sm flex-fill #{@range == 'day' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
               <%= link_to "Settimana", calendar_events_path(current_query.merge("range" => "week", "date_from" => Date.current.beginning_of_week.to_s, "date_to" => Date.current.end_of_week.to_s)),
-                    class: "btn btn-sm #{@range == 'week' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+                class: "btn btn-sm flex-fill #{@range == 'week' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
               <%= link_to "Mese", calendar_events_path(current_query.merge("range" => "month", "date_from" => Date.current.to_s, "date_to" => Date.current.end_of_month.to_s)),
-                    class: "btn btn-sm #{@range == 'month' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+                class: "btn btn-sm flex-fill #{@range == 'month' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
                 <%= link_to "Mese prossimo", calendar_events_path(current_query.merge("range" => "next_month", "date_from" => Date.current.next_month.beginning_of_month.to_s, "date_to" => Date.current.next_month.end_of_month.to_s)),
-                  class: "btn btn-sm #{@range == 'next_month' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
+              class: "btn btn-sm flex-fill #{@range == 'next_month' ? 'btn-secondary' : 'btn-outline-secondary'}" %>
             </div>
           </div>
 

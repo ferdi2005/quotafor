@@ -14,15 +14,14 @@ class CustomersController < ApplicationController
   end
 
   def new
-    @customer = current_user.customers.new(
-      relationship_started_on: Date.current,
-      referred_by_customer_id: selected_referred_by_customer_id
-    )
+    @customer = current_user.customers.new
+    apply_customer_defaults(@customer)
     build_nested_associations
   end
 
   def create
     @customer = current_user.customers.new(customer_params)
+    apply_customer_defaults(@customer)
 
     if @customer.save
       redirect_to customer_path(@customer), notice: "Cliente creato con successo."
@@ -81,6 +80,19 @@ class CustomersController < ApplicationController
 
   def customer_params
     if privacy_mode_enabled? && @customer&.persisted?
+      permitted = params.require(:customer).permit(
+        :first_name,
+        :last_name,
+        :phone,
+        :email,
+        :referred_by_customer_id
+      )
+
+      permitted[:referred_by_customer_id] = normalized_referred_by_customer_id(permitted[:referred_by_customer_id])
+      return permitted
+    end
+
+    if privacy_mode_enabled?
       permitted = params.require(:customer).permit(
         :first_name,
         :last_name,
@@ -157,6 +169,8 @@ class CustomersController < ApplicationController
   end
 
   def privacy_mode_enabled?
+    return Current.privacy_mode unless Current.privacy_mode.nil?
+
     ActiveModel::Type::Boolean.new.cast(ENV.fetch("PRIVACY", false))
   end
 
@@ -166,6 +180,12 @@ class CustomersController < ApplicationController
 
   def selected_referred_by_customer_id
     normalized_referred_by_customer_id(params[:referred_by_customer_id])
+  end
+
+  def apply_customer_defaults(customer)
+    customer.relationship_started_on ||= Date.current if privacy_mode_enabled?
+    customer.customer_type ||= :new_customer if privacy_mode_enabled?
+    customer.referred_by_customer_id ||= selected_referred_by_customer_id if customer.new_record?
   end
 
   def normalized_referred_by_customer_id(raw_id)

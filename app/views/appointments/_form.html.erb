@@ -1,3 +1,5 @@
+<% privacy_mode = privacy_mode_enabled? %>
+
 <%= form_with model: [@customer, @appointment], local: true do |f| %>
   <% if @appointment.errors.any? %>
     <div class="alert alert-danger">
@@ -63,29 +65,31 @@
           <%= f.label :next_appointment_at, "Prossimo appuntamento", class: "form-label" %>
           <%= f.datetime_local_field :next_appointment_at, class: "form-control" %>
         </div>
-        <div class="col-md-6">
-          <%= f.label :ok_current_account, "Conto corrente aperto durante la visita", class: "form-label" %>
-          <%= f.select :ok_current_account,
-                       options_for_select([["Sì", true], ["No", false]], @appointment.ok_current_account),
-                       {},
-                       class: "form-select", id: "appt_ok_current_account" %>
-        </div>
-        <div class="col-md-6">
-          <div class="form-check mt-2">
-            <%= f.check_box :awaiting_bank_transfer, class: "form-check-input", id: "appt_awaiting_bank_transfer" %>
-            <%= f.label :awaiting_bank_transfer, "Attesa bonifico", class: "form-check-label" %>
+        <% unless privacy_mode %>
+          <div class="col-md-6">
+            <%= f.label :ok_current_account, "Conto corrente aperto durante la visita", class: "form-label" %>
+            <%= f.select :ok_current_account,
+                         options_for_select([["Sì", true], ["No", false]], @appointment.ok_current_account),
+                         {},
+                         class: "form-select", id: "appt_ok_current_account" %>
           </div>
-        </div>
-        <div class="col-md-6">
-          <%= f.label :awaiting_bank_transfer_amount, "Importo attesa bonifico (€)", class: "form-label" %>
-          <%= f.number_field :awaiting_bank_transfer_amount, class: "form-control", step: "0.01", min: 0 %>
-        </div>
-        <div class="col-md-6">
-          <div class="form-check mt-2">
-            <%= f.check_box :next_appointment_callback, class: "form-check-input", id: "appt_next_appointment_callback" %>
-            <%= f.label :next_appointment_callback, "Richiamare", class: "form-check-label" %>
+          <div class="col-md-6">
+            <div class="form-check mt-2">
+              <%= f.check_box :awaiting_bank_transfer, class: "form-check-input", id: "appt_awaiting_bank_transfer" %>
+              <%= f.label :awaiting_bank_transfer, "Attesa bonifico", class: "form-check-label" %>
+            </div>
           </div>
-        </div>
+          <div class="col-md-6">
+            <%= f.label :awaiting_bank_transfer_amount, "Importo attesa bonifico (€)", class: "form-label" %>
+            <%= f.number_field :awaiting_bank_transfer_amount, class: "form-control", step: "0.01", min: 0 %>
+          </div>
+          <div class="col-md-6">
+            <div class="form-check mt-2">
+              <%= f.check_box :next_appointment_callback, class: "form-check-input", id: "appt_next_appointment_callback" %>
+              <%= f.label :next_appointment_callback, "Richiamare", class: "form-check-label" %>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
 

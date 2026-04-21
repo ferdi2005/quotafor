@@ -1,4 +1,4 @@
-<% privacy_mode = privacy_mode_enabled? && customer.persisted? %>
+<% privacy_mode = privacy_mode_enabled? %>
 
 <%= form_with model: customer, local: true do |f| %>
   <% if customer.errors.any? %>
