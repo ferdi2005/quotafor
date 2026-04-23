@@ -80,8 +80,6 @@ GEM
     airbrussh (1.6.1)
       sshkit (>= 1.6.1, != 1.7.0)
     ast (2.4.3)
-    autoprefixer-rails (10.4.19.0)
-      execjs (~> 2)
     base64 (0.3.0)
     bcrypt (3.1.20)
     bcrypt_pbkdf (1.1.2)
@@ -90,8 +88,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.23.0)
       msgpack (~> 1.2)
-    bootstrap (5.3.3)
-      autoprefixer-rails (>= 9.1.0)
+    bootstrap (5.3.8)
       popper_js (>= 2.11.8, < 3)
     bootstrap_form (5.4.0)
       actionpack (>= 6.1)
@@ -157,7 +154,6 @@ GEM
     ed25519 (1.4.0)
     erb (6.0.2)
     erubi (1.13.1)
-    execjs (2.9.1)
     ffi (1.17.3-aarch64-linux-gnu)
     ffi (1.17.3-arm64-darwin)
     ffi (1.17.3-x86_64-linux-gnu)
@@ -433,7 +429,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap
-  bootstrap (~> 5.0)
+  bootstrap (~> 5.3)
   bootstrap_form
   brakeman
   bundler-audit
